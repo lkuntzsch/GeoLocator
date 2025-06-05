@@ -94,4 +94,7 @@ BV2 Projekt SS25
 | 6     | Backup + Docs                          | Evaluation + Vergleich        | Feedback & Polishing      | Deployment & Präsentation                |
 
 
+## Datasets
+### Open Street View
+https://github.com/gastruc/osv5m
 
