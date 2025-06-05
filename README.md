@@ -1,5 +1,13 @@
 # GeoLocator
 BV2 Projekt SS25
+## Ablauf
+1. Bilder mit Geotags sammeln (GeoYFCC, Flickr, Wikimedia)
+2. Pro Bild: Land/Region als Label extrahieren
+3. Für jedes Bild: CLIP-Embedding berechnen  
+4. Embeddings + Labels → Klassifikationsmodell (LogReg, kNN, MLP)
+5. Bei Nutzeranfrage: Embedding vom Bild → Modellvorhersage + ähnliche Trainingsbilder zeigen
+
+
 ### **Modulare Aufteilung**
 | Aufgabe | Titel                                                      | Personen |
 | ------- | ---------------------------------------------------------- | -------- |
