@@ -1,0 +1,47 @@
+# Aufgabe 1: Embeddings mit CLIP
+*Info Sammlung zum nachlesen für Interessierte*
+
+### 🧠 **CLIP wird nicht zum Labeln der Bilder verwendet, sondern zur Repräsentation.**
+
+---
+
+## 🔹 **Was macht CLIP?**
+
+CLIP nimmt ein Bild (oder einen Text) und gibt dir einen **Embedding-Vektor** zurück – z. B. ein 512-dimensionaler Zahlenvektor. Dieser Vektor enthält **semantische Informationen** darüber, _was im Bild ist_, aber CLIP gibt dir **kein Label** wie „Italien“ oder „Dschungel“.
+
+> Du kannst dir CLIP wie einen sehr gebildeten Beobachter vorstellen, der dir sagt:  
+> _„Das Bild zeigt etwas, das Pflanzen, Hügel und ein rot-gelbes Dach enthält.“_
+
+---
+
+## 🔹 **Woher kommen die Labels?**
+
+Die Labels (z. B. **Länder oder Regionen**) müssen von **externen Datenquellen** stammen – z. B.:
+
+- 🌍 Ein Datensatz wie **GeoYFCC** enthält Bilder **mit Geokoordinaten (GPS)**  
+    → daraus kann man das **Land oder die Region automatisch bestimmen** (z. B. via `geopy`, `reverse_geocode`).
+    
+- 🏛️ In deinem Trainingsdatensatz hat also jedes Bild:
+    
+    - das tatsächliche Bild (`.jpg`)
+        
+    - das zugehörige Label (`"Italien"` oder `"Südostasien"`)
+        
+
+---
+
+## 🔹 **Wie funktioniert das dann konkret?**
+
+1. Du hast 100.000 Bilder mit bekannten Labels (z. B. `"Frankreich"`, `"Norwegen"`, `"Chile"`)
+    
+2. Du schickst jedes Bild durch CLIP → bekommst je ein Embedding (512 Werte)
+    
+3. Jetzt trainierst du z. B. einen **k-NN-Classifier oder Logistic Regression**, der auf diesen Embeddings lernt:
+    
+    > _„Wenn das Embedding diesen Stil hat, ist es mit hoher Wahrscheinlichkeit aus Frankreich.“_
+    
+4. Wenn der Nutzer ein neues Bild hochlädt:
+    
+    - Du erzeugst _dessen_ Embedding
+        
+    - und fragst das Modell: _Welches bekannte Land/Label passt am besten zu diesem Embedding?_
