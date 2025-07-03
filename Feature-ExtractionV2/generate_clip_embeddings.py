@@ -12,12 +12,13 @@ Python-Skript zur Erzeugung von CLIP-Embeddings für das OSV5M-Dataset.
 
 Voraussetzungen:
 - Das Dataset liegt in zwei Ordnern: 'train' und 'test'.
-- In jedem Ordner befindet sich eine Datei 'metadata.csv' mit Spalten:
-  'filename', 'country', 'continent', 'osm_highway'.
+- In jedem Ordner befindet sich eine Datei 'metadata_train.csv' bzw. 'metadata_test.csv'
+  mit einer Spalte 'id', die dem Dateinamen <id>.jpg entspricht, sowie allen Metadaten (z.B. 'country', 'latitude', …).
+
 
 Das Skript lädt CLIP, erstellt Batch-Embeddings und speichert:
 - eine NumPy-Datei 'osv5m_clip_embeddings.npy' mit allen Embeddings
-- eine CSV-Datei 'osv5m_clip_metadata.csv' mit Zuordnung von Index zu Labels
+- eine CSV-Datei 'osv5m_clip_metadata.csv' mit Zuordnung von Index zu Labels und Metadaten
 """
 
 """
@@ -40,27 +41,37 @@ def generate_embeddings(data_dir, metadata_csv, model, processor, device, batch_
     df = pd.read_csv(metadata_csv)
     embeddings = []
     records = []
+
+    # In Batches über das DataFrame iterieren
     for start in tqdm(range(0, len(df), batch_size), desc=f"Processing {os.path.basename(data_dir)}"):
         batch_df = df.iloc[start:start + batch_size]
-        images = [
-            Image.open(os.path.join(data_dir, row['filename'])).convert('RGB')
-            for _, row in batch_df.iterrows()
-        ]
+
+        # Bilder laden
+        images = []
+        for _, row in batch_df.iterrows():
+            img_path = os.path.join(data_dir, f"{row['id']}.jpg")
+            images.append(Image.open(img_path).convert('RGB'))
+
+        # CLIP-Inputs erzeugen und Embeddings berechnen
         inputs = processor(images=images, return_tensors='pt', padding=True)
         inputs = {k: v.to(device) for k, v in inputs.items()}
         with torch.no_grad():
             image_embeds = model.get_image_features(**inputs)
         image_embeds = image_embeds.cpu().numpy()
         embeddings.append(image_embeds)
-        for idx, row in enumerate(batch_df.itertuples(index=False), start=start):
-            records.append({
+
+        # Metadaten-Rekorde anlegen
+        for i, (_, row) in enumerate(batch_df.iterrows()):
+            idx = start + i
+            rec = row.to_dict()  # enthält alle Spalten aus metadata_*.csv
+            rec.update({
                 'index': idx,
                 'split': os.path.basename(data_dir),
-                'filename': row.filename,
-                'country': getattr(row, 'country', ''),
-                'continent': getattr(row, 'continent', ''),
-                'osm_highway': getattr(row, 'osm_highway', '')
+                'filename': f"{row['id']}.jpg"
             })
+            records.append(rec)
+
+    # Embeddings als (N, D)-Array, Records als DataFrame
     return np.vstack(embeddings), pd.DataFrame(records)
 
 def main():
@@ -69,19 +80,25 @@ def main():
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
-    splits = ['train', 'test']
+    splits = [
+        ('train', os.path.join(base_dir, 'train', 'metadata_train.csv')),
+        ('test',  os.path.join(base_dir, 'test',  'metadata_test.csv'))
+    ]
+
     all_embs = []
     all_recs = []
-    for split in splits:
-        data_dir = os.path.join(base_dir, split)
-        metadata_csv = os.path.join(data_dir, "metadata.csv")
+
+    for split_name, metadata_csv in splits:
+        data_dir = os.path.join(base_dir, split_name)
         embs, recs = generate_embeddings(data_dir, metadata_csv, model, processor, device)
         all_embs.append(embs)
         all_recs.append(recs)
 
+    # Gesamtdaten zusammenführen    
     embeddings = np.vstack(all_embs)
     df = pd.concat(all_recs, ignore_index=True)
 
+    # Ausgeben
     np.save("osv5m_clip_embeddings.npy", embeddings)
     df.to_csv("osv5m_clip_metadata.csv", index=False)
     print("Fertig! 'osv5m_clip_embeddings.npy' und 'osv5m_clip_metadata.csv' wurden erstellt.")
