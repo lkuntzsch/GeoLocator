@@ -36,9 +36,18 @@ und speichert:
 
 
 """
+EUROPE_CODES = [
+    'AL','AD','AT','BY','BE','BA','BG','HR','CY','CZ','DK','EE','FI','FR',
+    'DE','GR', 'HU','IS','IE','IT','XK','LV','LI','LT','LU','MT','MD','MC',
+    'ME','NL','MK','NO', 'PL','PT','RO','RU','SM','RS','SK','SI','ES','SE',
+    'CH','UA','GB','VA'
+]
+
 
 def generate_embeddings(data_dir, metadata_csv, model, processor, device, batch_size=64):
     df = pd.read_csv(metadata_csv)
+    df = df[df['country'].isin(EUROPE_CODES)]
+
     embeddings = []
     records = []
 
@@ -80,9 +89,14 @@ def main():
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
+    '''
     splits = [
         ('train', os.path.join(base_dir, 'train', 'metadata_train.csv')),
         ('test',  os.path.join(base_dir, 'test',  'metadata_test.csv'))
+    ]
+    '''
+    splits = [
+        ('images', os.path.join(base_dir, 'train', 'metadata.csv'))
     ]
 
     all_embs = []
