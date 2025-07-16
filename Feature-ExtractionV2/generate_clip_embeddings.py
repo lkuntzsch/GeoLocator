@@ -5,14 +5,15 @@ import torch
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 from tqdm import tqdm
+import argparse
 
 
 """
 Python-Skript zur Erzeugung von CLIP-Embeddings für das OSV5M-Dataset.
 
 Voraussetzungen:
-- Das Dataset liegt in zwei Ordnern: 'train' und 'test'.
-- In jedem Ordner befindet sich eine Datei 'metadata_train.csv' bzw. 'metadata_test.csv'
+- Das Dataset liegt nicht mehr in zwei Ordnern 'train' und 'test' sondern in einem Ordner 'images'
+- In dem Ordner befindet sich eine Datei 'metadata_combinded.csv' 
   mit einer Spalte 'id', die dem Dateinamen <id>.jpg entspricht, sowie allen Metadaten (z.B. 'country', 'latitude', …).
 
 
@@ -36,86 +37,125 @@ und speichert:
 
 
 """
-EUROPE_CODES = [
-    'AL','AD','AT','BY','BE','BA','BG','HR','CY','CZ','DK','EE','FI','FR',
-    'DE','GR', 'HU','IS','IE','IT','XK','LV','LI','LT','LU','MT','MD','MC',
-    'ME','NL','MK','NO', 'PL','PT','RO','RU','SM','RS','SK','SI','ES','SE',
-    'CH','UA','GB','VA'
-]
 
 
-def generate_embeddings(data_dir, metadata_csv, model, processor, device, batch_size=64):
-    df = pd.read_csv(metadata_csv)
-    df = df[df['country'].isin(EUROPE_CODES)]
+def generate_embeddings(data_dir, df_part, model, processor, device, batch_size=64):
+    """
+    data_dir   : Pfad zum images_part_XX Ordner
+    df_part    : DataFrame mit den Zeilen der Metadaten, die wir in diesem Ordner tatsächlich verarbeiten
+    """
 
     embeddings = []
     records = []
 
     # In Batches über das DataFrame iterieren
-    for start in tqdm(range(0, len(df), batch_size), desc=f"Processing {os.path.basename(data_dir)}"):
-        batch_df = df.iloc[start:start + batch_size]
+    for start in tqdm(range(0, len(df_part), batch_size), desc=f"Processing {os.path.basename(data_dir)}"):
+        batch_df = df_part.iloc[start:start + batch_size]
 
-        # Bilder laden
-        images = []
-        for _, row in batch_df.iterrows():
+        images, valid_indices = [], []
+
+        for i, row in batch_df.iterrows():
             img_path = os.path.join(data_dir, f"{row['id']}.jpg")
-            images.append(Image.open(img_path).convert('RGB'))
+            if os.path.exists(img_path):
+                images.append(Image.open(img_path).convert('RGB'))
+                valid_indices.append(i)
+            else:
+                tqdm.write(f"[WARN] Datei nicht gefunden: {img_path}")
+        
+        if not images:
+            continue
 
         # CLIP-Inputs erzeugen und Embeddings berechnen
-        inputs = processor(images=images, return_tensors='pt', padding=True)
-        inputs = {k: v.to(device) for k, v in inputs.items()}
+        inputs = processor(images=images, return_tensors='pt', padding=True).to(device)
         with torch.no_grad():
-            image_embeds = model.get_image_features(**inputs)
-        image_embeds = image_embeds.cpu().numpy()
+            image_embeds = model.get_image_features(**inputs).cpu().numpy()
         embeddings.append(image_embeds)
 
         # Metadaten-Rekorde anlegen
-        for i, (_, row) in enumerate(batch_df.iterrows()):
-            idx = start + i
-            rec = row.to_dict()  # enthält alle Spalten aus metadata_*.csv
+        for j, idx in enumerate(valid_indices):
+            rec = df_part.loc[idx].to_dict()  # ?enthält alle Spalten aus metadata_*.csv für partial df (5 ordner)?
             rec.update({
-                'index': idx,
+                'index': start+j,
                 'split': os.path.basename(data_dir),
-                'filename': f"{row['id']}.jpg"
+                'filename': f"{rec['id']}.jpg"
             })
             records.append(rec)
 
     # Embeddings als (N, D)-Array, Records als DataFrame
-    return np.vstack(embeddings), pd.DataFrame(records)
+    if embeddings:
+        return np.vstack(embeddings), pd.DataFrame(records)
+    else:
+        return np.empty((0, model.config.projection_dim)), pd.DataFrame(records)
 
 def main():
-    base_dir = "path_to_dataset"  # Pfad anpassen: Ordner mit 'train' und 'test'
+    num_parts = 5 # ACHTUNG anpassen, wenn 5 zu viel sein sollten
+    base_dir = "path_to_dataset"  # ACHTUNG -  Pfad anpassen: Ordner 'images'
+    meta_path = "path_to_csv" # ACHTUNG - Pfad anpassen: Pfad zu 'metadata-combined.csv'
+
+    # CLIP laden
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
-    '''
-    splits = [
-        ('train', os.path.join(base_dir, 'train', 'metadata_train.csv')),
-        ('test',  os.path.join(base_dir, 'test',  'metadata_test.csv'))
-    ]
-    '''
-    splits = [
-        ('images', os.path.join(base_dir, 'train', 'metadata.csv'))
-    ]
+    # parse wegen ordnern
+    parser = argparse.ArgumentParser(
+        description="Erzeuge CLIP-Embeddings in Chargen von images_part_XX Ordnern."
+    )
+    parser.add_argument("--start", type=int, default=1,
+                        help="Erste Ordner-Nummer (01–50), z.B. 1 für images_part_01")
+    parser.add_argument("--output_embeddings", required=True,
+                        help="Dateiname für die NumPy-Ausgabe, z.B. osv5m_clip_embeddings_01-05.npy")
+    parser.add_argument("--output_csv", required=True,
+                        help="Dateiname für die Metadaten-Ausgabe, z.B. osv5m_clip_metadata_01-05.csv")
+    args = parser.parse_args()
+
+    # Metadaten einlesen
+    df_meta = pd.read_csv(meta_path)
 
     all_embs = []
     all_recs = []
 
-    for split_name, metadata_csv in splits:
-        data_dir = os.path.join(base_dir, split_name)
-        embs, recs = generate_embeddings(data_dir, metadata_csv, model, processor, device)
+    # Ordner liste
+    parts = [
+        f"images_part_{i:02d}"
+        for i in range(args.start, args.start + num_parts)
+        if i >= 1 and i <= 50
+    ]
+
+    for part in parts:
+        data_dir = os.path.join(base_dir, part)
+        if not os.path.isdir(data_dir):
+            print(f"[WARN] Ordner nicht gefunden, übersprungen: {data_dir}")
+            continue
+
+        # nur ids die in diesen orndern existieren
+        vorhandene_ids = {
+            os.path.splitext(f)[0]
+            for f in os.listdir(data_dir)
+            if f.lower().endswith(".jpg")
+        }
+        df_part = df_meta[df_meta['id'].astype(str).isin(vorhandene_ids)].reset_index(drop=True)
+
+        if df_part.empty:
+            print(f"[INFO] Keine passenden IDs in {part}, übersprungen.")
+            continue
+
+
+        embs, recs = generate_embeddings(data_dir, df_part, model, processor, device)
         all_embs.append(embs)
         all_recs.append(recs)
 
-    # Gesamtdaten zusammenführen    
-    embeddings = np.vstack(all_embs)
-    df = pd.concat(all_recs, ignore_index=True)
+    # Gesamtdaten zusammenführen
+    if all_embs:
+        embeddings = np.vstack(all_embs)
+        df_out = pd.concat(all_recs, ignore_index=True)
 
-    # Ausgeben
-    np.save("osv5m_clip_embeddings.npy", embeddings)
-    df.to_csv("osv5m_clip_metadata.csv", index=False)
-    print("Fertig! 'osv5m_clip_embeddings.npy' und 'osv5m_clip_metadata.csv' wurden erstellt.")
+        # Ausgeben
+        np.save(args.output_embeddings, embeddings)
+        df_out.to_csv(args.output_csv, index=False) 
+        print("Fertig! Embeddings: {args.output_embeddings}, Metadaten: {args.output_csv} wurden erstellt.")
+     else:
+        print("SOS! Keine Daten verarbeitet. Parameter prüfen!")
 
 if __name__ == "__main__":
     main()
