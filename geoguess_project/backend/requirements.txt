@@ -1,2 +1,9 @@
 flask
 flask-cors
+torch
+numpy
+pandas
+scikit-learn
+Pillow
+tqdm
+clip-by-openai
