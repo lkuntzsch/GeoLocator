@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 30 * 1024 * 1024 # 30MB
 CORS(app)
 
 # Coordinate Dictionary for countries (Hardcoded country locations)
