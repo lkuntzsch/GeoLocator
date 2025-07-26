@@ -18,9 +18,9 @@ h1 {
 }
 
 #uploadArea, #uploadAreaSmall {
-    border: 3px dashed #007bff;
+    border: 3px dashed #d61c20;
     border-radius: 10px;
-    color: #007bff;
+    color: #d61c20;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
@@ -45,8 +45,8 @@ h1 {
 
 #uploadArea.dragover, #uploadAreaSmall.dragover {
     background-color: #d0e7ff;
-    border-color: #0056b3;
-    color: #0056b3;
+    border-color: #d61c20;
+    color: #d61c20;
 }
 
 #uploadAreaSmall {
@@ -160,7 +160,7 @@ h1 {
 
 #map {
     flex: 2 1 60%;
-    border: 1px solid #ccc;
+    border: 1px solid #0A0A0A;
     border-radius: 8px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     min-width: 500px;
@@ -175,7 +175,7 @@ h1 {
     white-space: pre-wrap;
     font-family: monospace;
     font-size: 13px;
-    color: #333;
+    color: #0A0A0A;
     display: none;
 }
 
