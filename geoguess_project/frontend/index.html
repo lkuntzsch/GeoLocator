@@ -85,14 +85,30 @@
       const ctx = document.getElementById('barChart').getContext('2d');
       if (window.myChart) window.myChart.destroy();
 
+      const labels = Object.keys(data);
+      const values = Object.values(data).map(v => v * 100);
+
+      // Top 3
+      const sortedIndices = values
+        .map((val, idx) => ({ val, idx }))
+        .sort((a, b) => b.val - a.val)
+        .map(e => e.idx);
+
+      const top3Indices = sortedIndices.slice(0, 3);
+
+      // Colors
+      const barColors = values.map((_, idx) =>
+        top3Indices.includes(idx) ? '#d61c20' : '#0A0A0A'
+      );
+
       window.myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: Object.keys(data),
+          labels: labels,
           datasets: [{
             label: 'Wahrscheinlichkeit (%)',
-            data: Object.values(data).map(v => v * 100),
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            data: values,
+            backgroundColor: barColors
           }]
         },
         options: {
@@ -112,23 +128,27 @@
         }
       });
 
-      countries.forEach(({ name, lat, lon, probability }) => {
+      countries.forEach(({ name, lat, lon, probability }, index) => {
+        const isTop3 = index < 3;
+
         const circle = L.circle([lat, lon], {
-          color: 'blue',
-          fillColor: 'blue',
+          color: isTop3 ? '#d61c20' : '#0A0A0A',
+          fillColor: isTop3 ? '#d61c20' : '#0A0A0A',
           fillOpacity: probability,
           radius: 500000
         }).addTo(map);
+
         circle.bindPopup(`${name}: ${(probability * 100).toFixed(1)}%`);
       });
 
       if (countries.length > 0) {
-        // Top country only
+        // Zoom auf das Top-1-Land
         const top = countries[0];
-        map.setView([top.lat, top.lon], 3); // Map Zoomlevel, high = more zoom
+        map.setView([top.lat, top.lon], 3);
       } else {
         map.setView([20, 0], 2);
       }
+
       map.invalidateSize();
     }
 
@@ -164,11 +184,10 @@
       formData.append('image', file);
 
       try {
-        const response = await fetch('http://localhost:5001/upload', {
+        const response = await fetch('/upload', {
           method: 'POST',
           body: formData
         });
-        
 
         if (!response.ok) {
           resultPre.style.display = 'block';
