@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bildbasierte Geolokalisierung</title>
+  <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+
+<body>
+  <header class="header-box">
+      <div class="header-content">
+        <img src="data/geoguessLogo.png" alt="Logo" class="logo">
+        <h1><span class="spoti">Spoti</span><span class="find">Find</span></h1>
+      </div>
+  </header>
+
+  <div class="background-box" id="beforeDividerBox">
+    <label id="uploadArea" for="fileInput">
+      <span>Bild hierher ziehen<br>oder Feld anklicken</span>
+    </label>
+    <input type="file" id="fileInput" accept="image/*" />
+
+    <img id="uploadedImage" alt="Hochgeladenes Bild wird hier angezeigt" />
+
+    <label id="uploadAreaSmall" for="fileInputSmall">
+      Neues Bild hierher ziehen oder klicken
+    </label>
+    <input type="file" id="fileInputSmall" accept="image/*" />
+  
+
+    <div id="divider"></div>
+
+    <div id="visuals">
+      <div class="chartContainer">
+        <canvas id="barChart"></canvas>
+      </div>
+      <div id="map"></div>
+    </div>
+    
+    <h2 id="newTitle" style="display: none; visibility: hidden;"></h2>
+    <pre id="result" style="display: none; visibility: hidden;"></pre>
+  </div>
+
+
+  <script>
+    // Scrolling Animation script
+    function smoothScrollTo(element) {
+      const targetY = element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + element.offsetHeight / 2;
+      const startY = window.pageYOffset;
+      const distance = targetY - startY;
+      const duration = 1000;
+      let startTime = null;
+
+      function step(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        window.scrollTo(0, startY + distance * easeInOutQuad(progress));
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      function easeInOutQuad(t) {
+        return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    const map = L.map('map').setView([20, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    function drawChart(data) {
+      const ctx = document.getElementById('barChart').getContext('2d');
+      if (window.myChart) window.myChart.destroy();
+
+      window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: 'Wahrscheinlichkeit (%)',
+            data: Object.values(data).map(v => v * 100),
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 100 }
+          }
+        }
+      });
+    }
+
+    function showTopCountries(countries) {
+      map.eachLayer(layer => {
+        if (layer instanceof L.Circle) {
+          map.removeLayer(layer);
+        }
+      });
+
+      countries.forEach(({ name, lat, lon, probability }) => {
+        const circle = L.circle([lat, lon], {
+          color: 'blue',
+          fillColor: 'blue',
+          fillOpacity: probability,
+          radius: 500000
+        }).addTo(map);
+        circle.bindPopup(`${name}: ${(probability * 100).toFixed(1)}%`);
+      });
+
+      if (countries.length > 0) {
+        // Top country only
+        const top = countries[0];
+        map.setView([top.lat, top.lon], 3); // Map Zoomlevel, high = more zoom
+      } else {
+        map.setView([20, 0], 2);
+      }
+      map.invalidateSize();
+    }
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const uploadedImage = document.getElementById('uploadedImage');
+    const uploadAreaSmall = document.getElementById('uploadAreaSmall');
+    const fileInputSmall = document.getElementById('fileInputSmall');
+    const divider = document.getElementById('divider');
+    const visuals = document.getElementById('visuals');
+    const resultPre = document.getElementById('result');
+    
+    let firstUploadDone = false;
+
+    async function processFile(file) {
+      if (!file) return;
+
+      // Fade out
+      if (visuals.style.display === 'flex') {
+        visuals.style.transitionDuration = '400ms';
+        visuals.style.opacity = 0;
+        await new Promise(r => setTimeout(r, 400));
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedImage.src = e.target.result;
+        uploadedImage.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          resultPre.style.display = 'block';
+          resultPre.textContent = 'Fehler beim Hochladen: ' + response.status;
+          return;
+        }
+
+        const data = await response.json();
+        resultPre.style.display = 'block';
+        resultPre.textContent = JSON.stringify(data, null, 2);
+
+        drawChart(data.probabilities);
+        showTopCountries(data.topCountries);
+
+        uploadArea.style.display = 'none';
+        uploadAreaSmall.style.display = 'flex';
+        divider.style.display = 'block';
+        visuals.style.display = 'flex';
+        visuals.style.transitionDuration = '1000ms';
+        document.getElementById('newTitle').style.display = 'block';
+        map.invalidateSize();
+
+        // Fade in
+        setTimeout(() => {
+          visuals.style.opacity = 1;
+        }, 400); // wait before fade in. time in ms
+
+        document.getElementById('newTitle').style.display = 'block';
+        map.invalidateSize();
+
+        smoothScrollTo(visuals);
+
+      } catch (error) {
+        resultPre.style.display = 'block';
+        resultPre.textContent = 'Netzwerkfehler: ' + error.message;
+      }
+    }
+
+    fileInput.addEventListener('change', () => {
+      processFile(fileInput.files[0]);
+    });
+
+    fileInputSmall.addEventListener('change', () => {
+      processFile(fileInputSmall.files[0]);
+    });
+
+    function setupDragDrop(uploadLabel, fileInputElement) {
+      uploadLabel.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadLabel.classList.add('dragover');
+      });
+
+      uploadLabel.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadLabel.classList.remove('dragover');
+      });
+
+      uploadLabel.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadLabel.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+          processFile(e.dataTransfer.files[0]);
+          fileInputElement.value = '';
+        }
+      });
+    }
+
+    setupDragDrop(uploadArea, fileInput);
+    setupDragDrop(uploadAreaSmall, fileInputSmall);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+FROM nginx:alpine
+
+# Entfernt die Standard-NGINX-Konfig
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Unsere eigene Config hinzufügen
+COPY nginx.conf /etc/nginx/conf.d/
+
+# Unser HTML-Frontend reinpacken
+COPY frontend/ /usr/share/nginx/html

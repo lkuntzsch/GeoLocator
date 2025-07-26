@@ -1,0 +1,23 @@
+Virtual Environment (venv) damit isoliert läuft.
+	Flask: lightweight web-framework für python, für eigene webserver logik
+	Flask-CORS: anbindung vom HTML im browser mit dem python webserver
+@app.route('/upload', methods=['POST'])		definiert eine route für kommunikation für bild upload
+POST						bild per post an server senden
+request.files['image']				erhält bild aus form
+jsonify(...)					für return vom ergebnis
+
+
+Upload:
+input field mit drag drop bzw. klick auswähl methode
+bild wird über javascript per FileReade gelesen, FormData Objekt erstellt und dann per Post an das Python Flask script geschickt
+
+
+Visualisierung:
+Chart.js, JavaScript bibliothek für plots
+Leaflet.js, JavaScript bibliothek für landkarte, kreis visualisierung inbuilt methode
+
+
+UX:
+Nach upload runterscrollen zu plot + karte
+Fade in, fade out
+rest TODO, also farben, logo, design
