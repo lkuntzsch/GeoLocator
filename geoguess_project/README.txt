@@ -1,33 +1,9 @@
 Prerequesites:
 - Python 3
-- Flask
-- Flask-CORS
+- Docker Desktop
 
-Used:
-- Chart.js
-- Leaflet.js
-
-
-Open 2 cmd windows:
-
-
-First cmd, run flask server:
-cd path
-venv\Scripts\activate
-python app.py
-
-(Running on http: ...)
-
-
-
-Second cmd, run html:
-cd path
-venv\Scripts\activate
-python -m http.server 8000
-
-(Serving HTTP on :: port ...)
-
-
-
-Browser:
-http://localhost:8000/index.html
+Docker:
+- Start Docker.desktop
+- Open CMD and path to "geoguess_project" where "docker-compose.yml" file is located.
+	- docker-compose up -d --build
+- Open browser type in http://localhost:8080
