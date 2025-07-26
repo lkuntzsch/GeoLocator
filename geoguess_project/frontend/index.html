@@ -184,10 +184,11 @@
       formData.append('image', file);
 
       try {
-        const response = await fetch('/upload', {
+        const response = await fetch('http://localhost:5001/upload', {
           method: 'POST',
           body: formData
         });
+        
 
         if (!response.ok) {
           resultPre.style.display = 'block';
