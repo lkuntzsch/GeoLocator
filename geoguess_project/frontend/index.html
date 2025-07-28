@@ -15,26 +15,34 @@
 <body>
   <header class="header-box">
       <div class="header-content">
-        <img src="data/geoguessLogo.png" alt="Logo" class="logo">
-        <h1><span class="spoti">Spoti</span><span class="find">Find</span></h1>
+        <img src="data/geoguessLogo.png" alt="Logo" class="logo" onclick="location.reload()" style="cursor: pointer;">
+        <h1 onclick="location.reload()" style="cursor: pointer;">
+          <span class="spoti">Spoti</span><span class="find">Find</span>
+        </h1>
       </div>
   </header>
 
   <div class="background-box" id="beforeDividerBox">
     <label id="uploadArea" for="fileInput">
-      <span>Bild hierher ziehen<br>oder Feld anklicken</span>
+      <div class="upload-icon">
+        <img src="data/upload.png" alt="Upload Icon" />
+      </div>
+      <span class="upload-text">Bild hierher ziehen oder Feld anklicken</span>
     </label>
     <input type="file" id="fileInput" accept="image/*" />
 
     <img id="uploadedImage" alt="Hochgeladenes Bild wird hier angezeigt" />
 
     <label id="uploadAreaSmall" for="fileInputSmall">
-      Neues Bild hierher ziehen oder klicken
+      <div class="upload-icon">
+        <img src="data/upload.png" alt="Upload Icon" />
+      </div>
+      <span class="upload-text">Neues Bild hierher ziehen oder klicken</span>
     </label>
     <input type="file" id="fileInputSmall" accept="image/*" />
   
 
-    <div id="divider"></div>
+    <div id="divider" class="divider"></div>
 
     <div id="visuals">
       <div class="chartContainer">
@@ -42,16 +50,22 @@
       </div>
       <div id="map"></div>
     </div>
-    
+
+    <div id="divider2" class="divider"></div>
+    <div id="chatBox">
+      <p id="chatText"></p>
+    </div>
+
     <h2 id="newTitle" style="display: none; visibility: hidden;"></h2>
     <pre id="result" style="display: none; visibility: hidden;"></pre>
+
   </div>
 
 
   <script>
     // Scrolling Animation script
-    function smoothScrollTo(element) {
-      const targetY = element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + element.offsetHeight / 2;
+    function smoothScrollTo(element, extraOffset = 0) {
+      const targetY = element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + element.offsetHeight / 2 + extraOffset;
       const startY = window.pageYOffset;
       const distance = targetY - startY;
       const duration = 1000;
@@ -152,15 +166,35 @@
       map.invalidateSize();
     }
 
+    // Typewriter animation
+    function typeWriterEffect(text, elementId, speed = 50) {
+      const element = document.getElementById(elementId);
+      let i = 0;
+      element.innerHTML = "";
+
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+
+      type();
+    }
+
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
     const uploadedImage = document.getElementById('uploadedImage');
     const uploadAreaSmall = document.getElementById('uploadAreaSmall');
     const fileInputSmall = document.getElementById('fileInputSmall');
     const divider = document.getElementById('divider');
+    const divider2 = document.getElementById('divider2');
     const visuals = document.getElementById('visuals');
+    const chatBox = document.getElementById('chatBox');
     const resultPre = document.getElementById('result');
-    
+
+    let textTyped = false;
     let firstUploadDone = false;
 
     async function processFile(file) {
@@ -177,6 +211,8 @@
       reader.onload = (e) => {
         uploadedImage.src = e.target.result;
         uploadedImage.style.display = 'block';
+
+        document.getElementById('beforeDividerBox').style.paddingTop = "150px";
       };
       reader.readAsDataURL(file);
 
@@ -184,19 +220,21 @@
       formData.append('image', file);
 
       try {
-        const response = await fetch('/upload', {
+        const response = await fetch('http://localhost:5000/upload', {
           method: 'POST',
           body: formData
         });
+        
 
         if (!response.ok) {
-          resultPre.style.display = 'block';
+          resultPre.style.display = 'none';
           resultPre.textContent = 'Fehler beim Hochladen: ' + response.status;
           return;
         }
 
         const data = await response.json();
-        resultPre.style.display = 'block';
+        const explanationText = data.explanation;
+        resultPre.style.display = 'none';
         resultPre.textContent = JSON.stringify(data, null, 2);
 
         drawChart(data.probabilities);
@@ -205,9 +243,16 @@
         uploadArea.style.display = 'none';
         uploadAreaSmall.style.display = 'flex';
         divider.style.display = 'block';
+        divider2.style.display = 'none';
         visuals.style.display = 'flex';
         visuals.style.transitionDuration = '1000ms';
-        document.getElementById('newTitle').style.display = 'block';
+        document.getElementById('newTitle').style.display = 'none';
+        chatBox.style.display = 'block';
+        textTyped = false;
+        chatBox.classList.remove('visible');
+        document.getElementById("chatText").innerHTML = "";
+        storedExplanationText = explanationText;
+        firstUploadDone = true;
         map.invalidateSize();
 
         // Fade in
@@ -215,13 +260,12 @@
           visuals.style.opacity = 1;
         }, 400); // wait before fade in. time in ms
 
-        document.getElementById('newTitle').style.display = 'block';
         map.invalidateSize();
 
-        smoothScrollTo(visuals);
+        smoothScrollTo(visuals, 90);
 
       } catch (error) {
-        resultPre.style.display = 'block';
+        resultPre.style.display = 'none';
         resultPre.textContent = 'Netzwerkfehler: ' + error.message;
       }
     }
@@ -254,6 +298,20 @@
         }
       });
     }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && firstUploadDone && !textTyped) {
+          chatBox.classList.add('visible');
+          typeWriterEffect(storedExplanationText, "chatText", 30);
+          textTyped = true;
+        }
+      });
+    }, {
+      threshold: 0.5
+    });
+
+    observer.observe(chatBox);
 
     setupDragDrop(uploadArea, fileInput);
     setupDragDrop(uploadAreaSmall, fileInputSmall);

@@ -2,15 +2,24 @@
     box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
     font-family: Arial, sans-serif;
-    padding: 0;
-    margin: 0;
-    background-image: url("data/background.jpg");
+    background-image: url("data/background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    overflow-y: scroll;
 }
 
 h1 {
@@ -27,8 +36,31 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     text-align: center;
     padding: 10px;
+}
+
+.upload-icon {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-icon img {
+  width: 80px;
+  height: auto;
+}
+
+.upload-text {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  line-height: 1.4;
+  font-weight: bold;
 }
 
 #uploadArea span, #uploadAreaSmall span {
@@ -37,8 +69,8 @@ h1 {
 }
 
 #uploadArea {
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     margin: 0 auto 20px;
     font-size: 18px;
 }
@@ -50,11 +82,47 @@ h1 {
 }
 
 #uploadAreaSmall {
-    width: 200px;
-    height: 80px;
-    margin: 10px auto 30px;
+    width: 400px;
+    height: 100px;
+    margin: 40px auto 10px;
     font-size: 14px;
     display: none;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 3px dashed #d61c20;
+    border-radius: 10px;
+    color: #d61c20;
+    cursor: pointer;
+    user-select: none;
+    padding: 10px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#uploadAreaSmall .upload-icon {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#uploadAreaSmall .upload-icon img {
+  width: 40px;
+  height: auto;
+}
+
+#uploadAreaSmall .upload-text {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  font-weight: bold;
+  line-height: 1.4;
+  user-select: none;
 }
 
 #fileInput, #fileInputSmall {
@@ -67,7 +135,7 @@ h1 {
     max-width: 100%;
     max-height: 300px;
     border-radius: 8px;
-    border: 1px solid #0A0A0A;
+    border: 1px solid #0a0a0a50;
     object-fit: contain;
 }
 
@@ -108,19 +176,19 @@ h1 {
 }
 
 .background-box {
-    background: #e7dedabb;
+    background: #e7deda88;
     backdrop-filter: blur(10px);
     width: 75%;
-    padding-top: 100px;
+    padding-top: 250px;
     margin: 0 auto;
     min-height: 100vh;
 }
 
-#divider {
+.divider {
     width: 80%;
     height: 1px;
     background-color: #0A0A0A;
-    margin: 20px auto;
+    margin: 60px auto;
     display: none;
 }
 
@@ -145,6 +213,7 @@ h1 {
     aspect-ratio: 3 / 4;
     background: #e7deda;
     border-radius: 8px;
+    border: 1px solid #0a0a0a50;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -160,10 +229,54 @@ h1 {
 
 #map {
     flex: 2 1 60%;
-    border: 1px solid #0A0A0A;
+    border: 1px solid #0a0a0a50;
     border-radius: 8px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     min-width: 500px;
+}
+
+#chatBox {
+  padding: 15px;
+  background-color: #0a0a0aaa;
+  border-radius: 12px;
+  font-size: 1.1em;
+  display: none;
+  
+  width: 400px;
+  height: 400px;
+  max-width: 90vw;
+  max-height: 50vh;
+
+  margin: 50px auto 30px auto;
+  
+  overflow-y: auto;
+  box-shadow: 0 0 15px #d61c20cc;
+}
+
+#chatBox {
+  padding: 10px;
+  background-color: #0a0a0a50;
+  border-radius: 5px;
+  font-size: 1.1em;
+  display: none;
+  width: 500px;
+  height: 300px;
+  max-width: 90vw;
+  max-height: 50vh;
+  margin: 50px auto 30px auto;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+  overflow-y: auto;
+  box-shadow: 0 0 15px #d61c20cc;
+}
+
+
+#chatBox.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #result {

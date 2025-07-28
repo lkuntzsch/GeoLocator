@@ -90,6 +90,7 @@ def get_dummy_data_2():
 @app.route('/upload', methods=['POST'])
 def upload():
     global toggle  # Global scope, REMOVE LATER
+
     if 'image' not in request.files:
         return jsonify({'error': 'Kein Bild hochgeladen!'}), 400
     
@@ -104,11 +105,15 @@ def upload():
     # Toggle between 2 dummy datasets
     if toggle:
         results = get_dummy_data_1()
+        explanation = "Das Bild zeigt eine typische mitteleuropäische Vegetation, was auf Deutschland oder Frankreich hinweist."
     else:
         results = get_dummy_data_2()
+        explanation = "Die Vegetation und Landschaft deuten auf Nordamerika, besonders Kanada oder USA hin."
     toggle = not toggle  # Toggle
     
-    
+    # Add explanation to result
+    results['explanation'] = explanation
+
     return jsonify(results)
 
 if __name__ == '__main__':
