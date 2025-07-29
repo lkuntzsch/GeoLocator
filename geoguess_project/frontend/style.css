@@ -2,15 +2,29 @@
     box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
     font-family: Arial, sans-serif;
-    padding: 0;
-    margin: 0;
-    background-image: url("data/background.jpg");
+    background-image: url("data/background.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    overflow-y: scroll;
+
+    background-color: #121212;
+    color: #eeeeee;
+
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1 {
@@ -18,17 +32,40 @@ h1 {
 }
 
 #uploadArea, #uploadAreaSmall {
-    border: 3px dashed #d61c20;
+    border: 3px dashed #94b9ff;
     border-radius: 10px;
-    color: #d61c20;
+    color: #94b9ff;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
     text-align: center;
     padding: 10px;
+}
+
+.upload-icon {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-icon img {
+  width: 80px;
+  height: auto;
+}
+
+.upload-text {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  line-height: 1.4;
+  font-weight: bold;
 }
 
 #uploadArea span, #uploadAreaSmall span {
@@ -37,24 +74,50 @@ h1 {
 }
 
 #uploadArea {
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     margin: 0 auto 20px;
     font-size: 18px;
 }
 
 #uploadArea.dragover, #uploadAreaSmall.dragover {
-    background-color: #d0e7ff;
-    border-color: #d61c20;
-    color: #d61c20;
+    background-color: #414e54;
+    border-color: #c8f9db;
+    color: #c8f9db;
 }
 
 #uploadAreaSmall {
-    width: 200px;
-    height: 80px;
-    margin: 10px auto 30px;
+    width: 400px;
+    height: 100px;
+    margin: 40px auto 10px;
     font-size: 14px;
     display: none;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#uploadAreaSmall .upload-icon {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#uploadAreaSmall .upload-icon img {
+  width: 40px;
+  height: auto;
+}
+
+#uploadAreaSmall .upload-text {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  font-weight: bold;
+  line-height: 1.4;
+  user-select: none;
 }
 
 #fileInput, #fileInputSmall {
@@ -67,14 +130,14 @@ h1 {
     max-width: 100%;
     max-height: 300px;
     border-radius: 8px;
-    border: 1px solid #0A0A0A;
+    border: 1px solid #94b9ff50;
     object-fit: contain;
 }
 
 .header-box {
     font-size: 12px;
     width: 100%;
-    background-color: #e7deda;
+    background-color: #1e1e1e;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
     padding: 1px 0;
     margin: 0;
@@ -98,29 +161,29 @@ h1 {
 }
 
 .spoti {
-  color: #d61c20;
+  color: #c8f9db;
   font-weight: bold;
 }
 
 .find {
-  color: #0A0A0A;
+  color: #94b9ff;
   font-weight: normal;
 }
 
 .background-box {
-    background: #e7dedabb;
+    background: #1e1e1eaa;
     backdrop-filter: blur(10px);
     width: 75%;
-    padding-top: 100px;
+    padding-top: 250px;
     margin: 0 auto;
     min-height: 100vh;
 }
 
-#divider {
+.divider {
     width: 80%;
     height: 1px;
-    background-color: #0A0A0A;
-    margin: 20px auto;
+    background-color: #94b9ff;
+    margin: 60px auto;
     display: none;
 }
 
@@ -143,8 +206,9 @@ h1 {
 .chartContainer {
     flex: 1 1 40%;
     aspect-ratio: 3 / 4;
-    background: #e7deda;
+    background: #1e1e1e;
     border-radius: 8px;
+    border: 1px solid #94b9ff50;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -156,26 +220,81 @@ h1 {
 #barChart {
     width: 100%;
     height: 100%;
+    background-color: #1e1e1e;
 }
 
 #map {
+    position: relative;
     flex: 2 1 60%;
-    border: 1px solid #0A0A0A;
+    border: 1px solid #94b9ff50;
     border-radius: 8px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     min-width: 500px;
+}
+
+#mapOceanOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(180, 218, 255, 0.055);
+  pointer-events: none;
+  border-radius: 8px;
+  z-index: 500;
+}
+
+#chatBox {
+  padding: 15px;
+  background-color: #94b9ffaa;
+  border-radius: 12px;
+  font-size: 1.1em;
+  display: none;
+  
+  width: 400px;
+  height: 400px;
+  max-width: 90vw;
+  max-height: 50vh;
+
+  margin: 50px auto 30px auto;
+  
+  overflow-y: auto;
+  box-shadow: 0 0 15px #c8f9dbcc;
+}
+
+#chatBox {
+  padding: 10px;
+  background-color: #94b9ff50;
+  border-radius: 5px;
+  font-size: 1.1em;
+  display: none;
+  width: 500px;
+  height: 300px;
+  max-width: 90vw;
+  max-height: 50vh;
+  margin: 50px auto 30px auto;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+  overflow-y: auto;
+  box-shadow: 0 0 15px #c8f9dbcc;
+}
+
+
+#chatBox.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #result {
     max-width: 600px;
     margin: 10px auto;
     padding: 10px;
-    background: #f0f0f0;
+    background: #121212;
     border-radius: 8px;
     white-space: pre-wrap;
     font-family: monospace;
     font-size: 13px;
-    color: #0A0A0A;
+    color: #94b9ff;
     display: none;
 }
 
@@ -190,4 +309,19 @@ h1 {
     width: 100%;
     aspect-ratio: auto;
     }
+}
+
+/* ----------- DARKMODE FILTER FOR PLOT + MAP ----------- */
+.leaflet-layer, 
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.leaflet-container {
+  border-radius: 8px !important;
+  border: 1px solid rgba(148, 185, 255, 0.31) !important;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1) !important;
+  background-color: transparent !important;
 }
