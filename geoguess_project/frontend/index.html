@@ -104,8 +104,16 @@
       const ctx = document.getElementById('barChart').getContext('2d');
       if (window.myChart) window.myChart.destroy();
 
-      const labels = Object.keys(data);
-      const values = Object.values(data).map(v => v * 100);
+      // 1. Datenpaare [Label, Wert] bilden
+      const entries = Object.entries(data)
+        .map(([label, prob]) => [label, prob * 100]);
+
+      // 2. Absteigend nach Wert sortieren
+      entries.sort((a, b) => b[1] - a[1]);
+
+      // 3. Neue Arrays für Chart.js
+      const labels = entries.map(e => e[0]);
+      const values = entries.map(e => e[1]);
 
       const sortedIndices = values
         .map((val, idx) => ({ val, idx }))
