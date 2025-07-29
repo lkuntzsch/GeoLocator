@@ -5,6 +5,9 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from ml_model import MLP
 from clip_utils import image_to_clip_embedding
+import pycountry
+import requests
+from functools import lru_cache
 
 # Modellparameter
 HIDDEN_DIMS = [512, 256, 128]
@@ -58,28 +61,112 @@ country_coords = {
     "MT": (35.9375, 14.3754)
 }
 
+# Helper: ISO‑Code → Wikipedia‑Seitentitel
+# Manuelle Zuordnung für deutsche Wikipedia-Titel
+ISO_TO_WIKI_DE = {
+    "PL": "Polen",
+    "DE": "Deutschland",
+    "FR": "Frankreich",
+    "IT": "Italien",
+    "ES": "Spanien",
+    "SE": "Schweden",
+    "FI": "Finnland",
+    "PT": "Portugal",
+    "NL": "Niederlande",
+    "GR": "Griechenland",
+    "AT": "Österreich",
+    "DK": "Dänemark",
+    "BE": "Belgien",
+    "CZ": "Tschechien",
+    "HU": "Ungarn",
+    "RO": "Rumänien",
+    "BG": "Bulgarien",
+    "HR": "Kroatien",
+    "SK": "Slowakei",
+    "SI": "Slowenien",
+    "LT": "Litauen",
+    "LV": "Lettland",
+    "EE": "Estland",
+    "IE": "Irland",
+    "LU": "Luxemburg",
+    "NO": "Norwegen",
+    "CH": "Schweiz",
+    "GB": "Vereinigtes_Königreich",
+    "MT": "Malta"
+}
+
+def iso_to_wiki_title(code: str, lang: str = 'de') -> str:
+    code = code.upper()
+    if lang == 'de' and code in ISO_TO_WIKI_DE:
+        return ISO_TO_WIKI_DE[code].replace(" ", "_")
+    
+    country = pycountry.countries.get(alpha_2=code)
+    if not country:
+        return code
+    return country.name.replace(' ', '_')
+
+
+
+# Helper: Wikipedia‑API mit Caching
+@lru_cache(maxsize=128)
+def get_wikipedia_info(title: str, lang: str = 'de'):
+    S = requests.Session()
+    URL = f"https://{lang}.wikipedia.org/w/api.php"
+    params = {
+        "action": "query",
+        "prop":    "extracts|pageimages",
+        "titles":  title,
+        "exintro": True,
+        "explaintext": True,
+        "piprop":  "thumbnail",
+        "pithumbsize": 300,
+        "format":  "json"
+    }
+    resp = S.get(URL, params=params).json()
+    pages = resp.get("query", {}).get("pages", {})
+    page = next(iter(pages.values()))
+    extract = page.get("extract", "")
+    thumb   = page.get("thumbnail", {}).get("source", "")
+    return {"description": extract, "thumbnail": thumb}
+
 def predict_location(image_file):
+    # CLIP-Embedding extrahieren
     embedding = image_to_clip_embedding(image_file).reshape(1, -1)
+    # Skalierung
     X_scaled = scaler.transform(embedding)
+    # In Tensor umwandeln und auf das Device schieben
     X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(device)
 
+    # Inferenz
     with torch.no_grad():
         logits = model(X_tensor)
         probs = torch.softmax(logits, dim=1).cpu().numpy()[0]
 
+    # Top‑5 Länder ermitteln
     topk = probs.argsort()[::-1][:5]
     top_labels = encoder.inverse_transform(topk)
-    
-    result = {
-        "probabilities": {label: float(probs[i]) for label, i in zip(top_labels, topk)},
-        "topCountries": [
-            {
-                "name": label,
-                "lat": country_coords.get(label, (0.0, 0.0))[0],
-                "lon": country_coords.get(label, (0.0, 0.0))[1],
-                "probability": float(probs[i])
+
+    # Ergebnisse aufbereiten, inkl. Wikipedia‑Info
+    top_countries = []
+    for label, i in zip(top_labels, topk):
+        lat, lon = country_coords.get(label, (0.0, 0.0))
+        wiki_title = iso_to_wiki_title(label)
+        wiki = get_wikipedia_info(wiki_title)
+        top_countries.append({
+            "code":        label,
+            "lat":         lat,
+            "lon":         lon,
+            "probability": float(probs[i]),
+            "wiki": {
+                "description": wiki["description"],
+                "thumbnail":   wiki["thumbnail"],
+                "source": f"https://de.wikipedia.org/wiki/{wiki_title}"
             }
-            for label, i in zip(top_labels, topk)
-        ]
+        })
+
+    return {
+        "probabilities": {
+            label: float(probs[i]) for label, i in zip(top_labels, topk)
+        },
+        "topCountries": top_countries
     }
-    return result

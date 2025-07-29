@@ -55,6 +55,12 @@
     <div id="chatBox">
       <p id="chatText"></p>
     </div>
+    <div id="wikiBox" style="display: none;">
+      <img id="wikiImage" alt="" style="max-width: 300px; display: block; margin: 1rem auto;" />
+      <p id="wikiDescription"></p>
+      <a id="wikiLink" href="" target="_blank" rel="noopener noreferrer" style="color: white;">Mehr auf Wikipedia</a>
+    </div>
+    
 
     <h2 id="newTitle" style="display: none; visibility: hidden;"></h2>
     <pre id="result" style="display: none; visibility: hidden;"></pre>
@@ -166,6 +172,26 @@
         }
       });
 
+      const top1 = countries[0];
+
+      const wikiBox = document.getElementById('wikiBox');
+      const wikiImg = document.getElementById('wikiImage');
+      const wikiDesc = document.getElementById('wikiDescription');
+      const wikiLink = document.getElementById('wikiLink');
+
+      if (top1 && top1.wiki) {
+        wikiImg.src = top1.wiki.thumbnail || "";
+        wikiImg.alt = `Bild von ${top1.name || "Land"}`;
+        wikiDesc.textContent = "";
+        wikiLink.href = top1.wiki.source || "#";
+      
+        wikiBox.style.display = 'block';
+      } else {
+        wikiBox.style.display = 'none';
+      }
+      
+
+
       countries.forEach(({ name, lat, lon, probability }, index) => {
         const isTop3 = index < 3;
 
@@ -191,7 +217,7 @@
     }
 
     // Typewriter animation
-    function typeWriterEffect(text, elementId, speed = 50) {
+    function typeWriterEffect(text, elementId, speed = 100) {
       const element = document.getElementById(elementId);
       let i = 0;
       element.innerHTML = "";
@@ -245,7 +271,7 @@
       formData.append('image', file);
 
       try {
-        const response = await fetch('http://localhost:5000/upload', {
+        const response = await fetch('http://localhost:5001/upload', {
           method: 'POST',
           body: formData
         });
@@ -275,8 +301,13 @@
         textTyped = false;
         chatBox.classList.remove('visible');
         document.getElementById("chatText").innerHTML = "";
-        storedExplanationText = explanationText;
-        firstUploadDone = true;
+        const explanation = data.explanation || "";
+        const top1 = data.topCountries[0];
+        const wikiText = top1?.wiki?.description || "";
+        
+        storedExplanationText = explanation + "\n\n" + wikiText;
+        
+                firstUploadDone = true;
         map.invalidateSize();
 
         // Fade in
@@ -327,7 +358,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting && firstUploadDone && !textTyped) {
           chatBox.classList.add('visible');
-          typeWriterEffect(storedExplanationText, "chatText", 30);
+          typeWriterEffect(storedExplanationText, "chatText", 10);
           textTyped = true;
         }
       });
