@@ -11,7 +11,6 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
-
 <body>
   <header class="header-box">
       <div class="header-content">
@@ -40,7 +39,6 @@
       <span class="upload-text">Neues Bild hierher ziehen oder klicken</span>
     </label>
     <input type="file" id="fileInputSmall" accept="image/*" />
-  
 
     <div id="divider" class="divider"></div>
 
@@ -48,7 +46,9 @@
       <div class="chartContainer">
         <canvas id="barChart"></canvas>
       </div>
-      <div id="map"></div>
+      <div id="map">
+        <div id="mapOceanOverlay"></div>
+      </div>
     </div>
 
     <div id="divider2" class="divider"></div>
@@ -60,7 +60,6 @@
     <pre id="result" style="display: none; visibility: hidden;"></pre>
 
   </div>
-
 
   <script>
     // Scrolling Animation script
@@ -102,18 +101,18 @@
       const labels = Object.keys(data);
       const values = Object.values(data).map(v => v * 100);
 
-      // Top 3
       const sortedIndices = values
         .map((val, idx) => ({ val, idx }))
         .sort((a, b) => b.val - a.val)
         .map(e => e.idx);
 
       const top3Indices = sortedIndices.slice(0, 3);
-
-      // Colors
       const barColors = values.map((_, idx) =>
-        top3Indices.includes(idx) ? '#d61c20' : '#0A0A0A'
+        top3Indices.includes(idx) ? '#c8f9db' : '#94b9ff'
       );
+
+      // Darkmode fest angenommen (darkmode = true)
+      const darkmode = true;
 
       window.myChart = new Chart(ctx, {
         type: 'bar',
@@ -129,10 +128,35 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { beginAtZero: true, max: 100 }
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                color: '#eeeeee'
+              },
+              grid: {
+                color: '#444444'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#eeeeee'
+              },
+              grid: {
+                color: '#444444'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#eeeeee'
+              }
+            }
           }
         }
       });
+      window.lastChartData = data;
     }
 
     function showTopCountries(countries) {
@@ -146,8 +170,8 @@
         const isTop3 = index < 3;
 
         const circle = L.circle([lat, lon], {
-          color: isTop3 ? '#d61c20' : '#0A0A0A',
-          fillColor: isTop3 ? '#d61c20' : '#0A0A0A',
+          color: isTop3 ? '#c8f9db' : '#94b9ff',
+          fillColor: isTop3 ? '#c8f9db' : '#94b9ff',
           fillOpacity: probability,
           radius: 500000
         }).addTo(map);
@@ -196,6 +220,7 @@
 
     let textTyped = false;
     let firstUploadDone = false;
+    let storedExplanationText = "";
 
     async function processFile(file) {
       if (!file) return;
@@ -224,7 +249,6 @@
           method: 'POST',
           body: formData
         });
-        
 
         if (!response.ok) {
           resultPre.style.display = 'none';
