@@ -208,86 +208,56 @@
       "MT": "Malta"
     };
     
-    function showTopCountries(relevantCountries) {
-      // Entferne alle vorhandenen Layer (Kreise oder Polygone)
+    function showTopCountries(countries) {
+      // countries ist jetzt: [{code:"DE",lat:…,lon:…,probability:…,wiki:{…}}, …]
+      // daraus bauen wir uns die ISO‑Codes und Namen:
+      const countryCodes = countries.map(c => c.code);
+      const countryNames = countryCodes.map(code => isoToCountryName[code]);
+    
+      // Wiki‑Box für Top‑1 direkt vor dem GeoJSON‑Layer setzen:
+      const top1 = countries[0];
+      const wikiBox = document.getElementById('wikiBox');
+      const wikiImg = document.getElementById('wikiImage');
+      const wikiDesc = document.getElementById('wikiDescription');
+      const wikiLink = document.getElementById('wikiLink');
+      if (top1?.wiki) {
+        wikiImg.src         = top1.wiki.thumbnail || "";
+        wikiDesc.textContent= "";
+        wikiLink.href       = top1.wiki.source      || "#";
+        wikiBox.style.display = 'block';
+      } else {
+        wikiBox.style.display = 'none';
+      }
+    
+      // dann erst die GeoJSON‑Darstellung
       map.eachLayer(layer => {
-        if (layer instanceof L.Circle || layer instanceof L.GeoJSON) {
-          map.removeLayer(layer);
-        }
+        if (layer instanceof L.GeoJSON) map.removeLayer(layer);
       });
-    
-      // Gehe durch die relevanten Länder und färbe sie ein
       fetch('http://localhost:5001/geojson')
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-          // Filtere nur relevante Länder aus den GeoJSON-Daten
-          const relevantGeoJSON = {
+          const filtered = {
             type: "FeatureCollection",
-            features: data.features.filter(feature => {
-              const countryName = feature.properties.name;
-              const relevantCountryNames = relevantCountries.map(code => isoToCountryName[code]);
-              return relevantCountryNames.includes(countryName); // Nur relevante Länder
-            })
+            features: data.features.filter(f =>
+              countryNames.includes(f.properties.name)
+            )
           };
-    
-          // Jetzt nur relevante Länder auf der Karte darstellen
-          L.geoJSON(relevantGeoJSON, {
-            style: function(feature) {
-              const countryName = feature.properties.name;
-              const relevantCountryNames = relevantCountries.map(code => isoToCountryName[code]);
-    
-              const isTop1 = relevantCountryNames[0] === countryName;
-              const isTop2to5 = relevantCountryNames.slice(1, 5).includes(countryName);
-    
-              // Top-1 Land rot, andere Top-Länder grün
-              if (isTop1) {
-                // Zeige Wiki-Daten für Top-1
-                const top1 = relevantCountries[0]; // Top-1 Land
-                console.log(top1)
-                if (top1 && top1.wiki) {
-                  const wikiBox = document.getElementById('wikiBox');
-                  const wikiImg = document.getElementById('wikiImage');
-                  const wikiDesc = document.getElementById('wikiDescription');
-                  const wikiLink = document.getElementById('wikiLink');
-      
-                  wikiImg.src = top1.wiki.thumbnail || "";
-                  wikiImg.alt = `Bild von ${top1.name || "Land"}`;
-                  wikiDesc.textContent = top1.wiki.description || "Keine Beschreibung verfügbar.";
-                  wikiLink.href = top1.wiki.source || "#";
-      
-                  wikiBox.style.display = 'block'; // Zeige die Wiki-Box an
-                } else {
-                  wikiBox.style.display = 'none'; // Verstecke die Wiki-Box, wenn keine Daten vorhanden sind
-                }
-    
-                return {
-                  color: 'red',  // Top 1 in Rot
-                  weight: 2,
-                  opacity: 1
-                };
-              } else if (isTop2to5) {
-                return {
-                  color: 'green',  // Top 2 bis 5 in Grün
-                  weight: 2,
-                  opacity: 1
-                };
-              } else {
-                return {
-                  color: '#94b9ff', // Andere Länder in Blau
-                  weight: 1,
-                  opacity: 0.7
-                };
-              }
+          L.geoJSON(filtered, {
+            style(feature) {
+              const nm = feature.properties.name;
+              const idx = countryNames.indexOf(nm);
+              if (idx === 0) return { color:'red', weight:2, opacity:1 };
+              if (idx > 0 && idx < 5) return { color:'green', weight:2, opacity:1 };
+              return { color:'#94b9ff', weight:1, opacity:0.7 };
             },
-            onEachFeature: function(feature, layer) {
-              const countryName = feature.properties.name;
-              layer.bindPopup('<strong>' + countryName + '</strong>');
+            onEachFeature(feature, layer) {
+              layer.bindPopup(`<strong>${feature.properties.name}</strong>`);
             }
           }).addTo(map);
-    
         })
-        .catch(error => console.error('Fehler beim Laden der GeoJSON-Datei:', error));
+        .catch(err => console.error(err));
     }
+    
     
     
     const uploadArea = document.getElementById('uploadArea');
@@ -345,8 +315,9 @@
         resultPre.textContent = JSON.stringify(data, null, 2);
     
         drawChart(data.probabilities);
-        showTopCountries(data.relevantCountries); // Übergabe der relevanten Länder hier
-    
+        // neu
+        showTopCountries(data.topCountries);
+            
         uploadArea.style.display = 'none';
         uploadAreaSmall.style.display = 'flex';
         divider.style.display = 'block';
