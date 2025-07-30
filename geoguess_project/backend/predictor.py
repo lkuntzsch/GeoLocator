@@ -168,5 +168,6 @@ def predict_location(image_file):
         "probabilities": {
             label: float(probs[i]) for label, i in zip(top_labels, topk)
         },
-        "topCountries": top_countries
+        "topCountries": top_countries,
+        "relevantCountries": [country['code'] for country in top_countries] 
     }
