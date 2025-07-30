@@ -52,15 +52,18 @@
     </div>
 
     <div id="divider2" class="divider"></div>
-    <div id="chatBox">
-      <p id="chatText"></p>
+    <div id="infoContainer">
+      <!-- 1. Box: Wiki (Flagge) -->
+      <div id="wikiBox" style="display: none;">
+        <img id="wikiImage" alt="" />
+        <p id="wikiDescription"></p>
+        <a id="wikiLink" href="" target="_blank" rel="noopener noreferrer">Mehr auf Wikipedia</a>
+      </div>
+      <!-- 2. Box: Chat (Text) -->
+      <div id="chatBox">
+        <p id="chatText"></p>
+      </div>
     </div>
-    <div id="wikiBox" style="display: none;">
-      <img id="wikiImage" alt="" style="max-width: 300px; display: block; margin: 1rem auto;" />
-      <p id="wikiDescription"></p>
-      <a id="wikiLink" href="" target="_blank" rel="noopener noreferrer" style="color: white;">Mehr auf Wikipedia</a>
-    </div>
-    
 
     <h2 id="newTitle" style="display: none; visibility: hidden;"></h2>
     <pre id="result" style="display: none; visibility: hidden;"></pre>
@@ -404,7 +407,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting && firstUploadDone && !textTyped) {
           chatBox.classList.add('visible');
-          typeWriterEffect(storedExplanationText, "chatText", 10);
+          typeWriterEffect(storedExplanationText, "chatText", 5);
           textTyped = true;
         }
       });
