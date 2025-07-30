@@ -236,11 +236,30 @@
               const countryName = feature.properties.name;
               const relevantCountryNames = relevantCountries.map(code => isoToCountryName[code]);
     
-              // Top-1 Land rot, andere Top-Länder grün
               const isTop1 = relevantCountryNames[0] === countryName;
               const isTop2to5 = relevantCountryNames.slice(1, 5).includes(countryName);
     
+              // Top-1 Land rot, andere Top-Länder grün
               if (isTop1) {
+                // Zeige Wiki-Daten für Top-1
+                const top1 = relevantCountries[0]; // Top-1 Land
+                console.log(top1)
+                if (top1 && top1.wiki) {
+                  const wikiBox = document.getElementById('wikiBox');
+                  const wikiImg = document.getElementById('wikiImage');
+                  const wikiDesc = document.getElementById('wikiDescription');
+                  const wikiLink = document.getElementById('wikiLink');
+      
+                  wikiImg.src = top1.wiki.thumbnail || "";
+                  wikiImg.alt = `Bild von ${top1.name || "Land"}`;
+                  wikiDesc.textContent = top1.wiki.description || "Keine Beschreibung verfügbar.";
+                  wikiLink.href = top1.wiki.source || "#";
+      
+                  wikiBox.style.display = 'block'; // Zeige die Wiki-Box an
+                } else {
+                  wikiBox.style.display = 'none'; // Verstecke die Wiki-Box, wenn keine Daten vorhanden sind
+                }
+    
                 return {
                   color: 'red',  // Top 1 in Rot
                   weight: 2,
@@ -253,23 +272,23 @@
                   opacity: 1
                 };
               } else {
-                return null;  // Andere Länder ohne Umrandung
+                return {
+                  color: '#94b9ff', // Andere Länder in Blau
+                  weight: 1,
+                  opacity: 0.7
+                };
               }
             },
             onEachFeature: function(feature, layer) {
               const countryName = feature.properties.name;
-              const relevantCountryNames = relevantCountries.map(code => isoToCountryName[code]);
-    
-              // Popups nur für relevante Länder
-              if (relevantCountryNames.includes(countryName)) {
-                layer.bindPopup('<strong>' + countryName + '</strong>');
-              }
+              layer.bindPopup('<strong>' + countryName + '</strong>');
             }
           }).addTo(map);
     
         })
         .catch(error => console.error('Fehler beim Laden der GeoJSON-Datei:', error));
     }
+    
     
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
@@ -342,6 +361,9 @@
         const explanation = data.explanation || "";
         const top1 = data.topCountries[0];
         const wikiText = top1?.wiki?.description || "";
+        // Beispiel: Ausgabe der relevanten Daten
+        console.log(top1);
+        console.log(wikiText);
         
         storedExplanationText = explanation + "\n\n" + wikiText;
         
@@ -391,6 +413,21 @@
         }
       });
     }
+
+    function typeWriterEffect(text, elementId, speed) {
+      let i = 0;
+      const element = document.getElementById(elementId);
+      
+      function type() {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+    }
+    
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
