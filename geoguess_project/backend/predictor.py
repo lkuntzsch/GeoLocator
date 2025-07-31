@@ -10,8 +10,8 @@ import requests
 from functools import lru_cache
 
 # Modellparameter
-HIDDEN_DIMS = [512, 256, 128]
-DROPOUT = 0.5
+HIDDEN_DIMS = [1024, 512]
+DROPOUT     = 0.21911440122299433  # falls du das exakt übernehmen willst
 INPUT_DIM = 512
 
 # Laden des Modells und der Preprozessoren
