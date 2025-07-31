@@ -134,9 +134,9 @@
     
       const barColors = values.map((_, idx) => {
         if (top5Indices[0] === idx) {
-          return '#94b9ff';  // Top 1 in Rot
+          return '#c8f9db';  // Top 1 in Rot
         } else if (top5Indices.slice(1, 5).includes(idx)) {
-          return '#c8f9db';  // Top 2 bis 5 in Grün
+          return '#94b9ff';  // Top 2 bis 5 in Grün
         }
         return '#94b9ff'; // Restliche Länder in Blau
       });
@@ -256,8 +256,8 @@
             style(feature) {
               const nm = feature.properties.name;
               const idx = countryNames.indexOf(nm);
-              if (idx === 0) return { color:'#94b9ff', weight:2, opacity:1 };
-              if (idx > 0 && idx < 5) return { color:'#c8f9db', weight:2, opacity:1 };
+              if (idx === 0) return { color:'#c8f9db', weight:2, opacity:1 };
+              if (idx > 0 && idx < 5) return { color:'#94b9ff', weight:2, opacity:1 };
               return { color:'#94b9ff', weight:1, opacity:0.7 };
             },
             onEachFeature(feature, layer) {
