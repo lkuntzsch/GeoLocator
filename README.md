@@ -17,8 +17,7 @@ BV2 Projekt SS25
 | 4       | **Erklärbarkeit: Ähnliche Bilder & Kartenanzeige**         | C + D    |
 
 #### Aufgabe 1: Feature-Extraktion mit CLIP & Embedding-Datenbank (A + B)
-
-> Extrahieren der Embeddings für einen Open-Source-Datensatz und organisieren in Datenbank mit Länderlabels.
+Extrahieren der Embeddings für einen Open-Source-Datensatz und organisieren in Datenbank mit Länderlabels.
 
 **Teilaufgaben:**
 
@@ -35,8 +34,7 @@ BV2 Projekt SS25
 
 
 #### Aufgabe 2: Klassifikation + Inferenz-Service (A + C)
-
-> Trainieren eines Modells (Logistic Regression, MLP, k-NN), das für ein neues Bild den wahrscheinlichsten Aufnahmeort vorhersagt.
+Trainieren eines Modells (Logistic Regression, MLP, k-NN), das für ein neues Bild den wahrscheinlichsten Aufnahmeort vorhersagt.
 
 **Teilaufgaben:**
 
@@ -51,8 +49,7 @@ BV2 Projekt SS25
 
 
 #### Aufgabe 3: Web-App & Upload-Handling (B + D)
-
-> Frontend zur Bildauswahl, Upload und Ergebnisanzeige entwickeln.
+Frontend zur Bildauswahl, Upload und Ergebnisanzeige entwickeln.
 
 **Teilaufgaben:**
 
@@ -66,8 +63,7 @@ BV2 Projekt SS25
 **Tools:** `React`, `Tailwind`, `axios`, evtl. `leaflet` für die Karte
 
 #### Aufgabe 4: Ähnliche Bilder & Kartendarstellung (C + D)
-
-> Erklärbarkeit Modell: Dem Nutzer zeugen, warum das Modell diesen Ort vorhersagt. Dazu ggf. ähnlichste Bilder aus Trainingsdaten + Confidence + Karte.
+Erklärbarkeit Modell: Dem Nutzer zeugen, warum das Modell diesen Ort vorhersagt. Dazu ggf. ähnlichste Bilder aus Trainingsdaten + Confidence + Karte.
 
 **Teilaufgaben:**
 
