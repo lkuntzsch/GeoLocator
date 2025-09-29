@@ -1,6 +1,6 @@
 # GeoLocator
 BV2 Projekt SS25
-## Ablauf
+## Geplanter Ablauf
 1. Bilder mit Geotags sammeln (GeoYFCC, Flickr, Wikimedia)
 2. Pro Bild: Land/Region als Label extrahieren
 3. Für jedes Bild: CLIP-Embedding berechnen  
@@ -16,27 +16,27 @@ BV2 Projekt SS25
 | 3       | **Web-App (Frontend + API-Endpunkte)**                     | B + D    |
 | 4       | **Erklärbarkeit: Ähnliche Bilder & Kartenanzeige**         | C + D    |
 
-#### 🔹 Aufgabe 1: Feature-Extraktion mit CLIP & Embedding-Datenbank (A + B)
+#### Aufgabe 1: Feature-Extraktion mit CLIP & Embedding-Datenbank (A + B)
 
-> Extrahiere Embeddings für einen Open-Source-Datensatz (z. B. GeoYFCC, Flickr, Wikimedia). Organisiere sie in einer Embedding-Datenbank mit Länderlabels.
+> Extrahieren der Embeddings für einen Open-Source-Datensatz und organisieren in Datenbank mit Länderlabels.
 
 **Teilaufgaben:**
 
-- Datensatz vorbereiten: Bild-URLs, Geotags, Labels (Land, Region)
+- Datensatz vorbereiten: Bild-URLs, Labels (Land, Region)
     
-- `clip-vit-base` oder `ViT-B/32` verwenden → 512-dim Embedding
+- `clip-vit-base` oder `ViT-B/32` verwenden -> 512-dim Embedding
     
-- Embeddings serialisieren (z. B. als `.npy` + JSON-Labels oder mit Faiss)
+- Embeddings serialisieren (z. B. als `.npy` + JSON-Labels)
     
 - Optional: PCA/UMAP zum Plotten/Verstehen
     
 
-**Tools:** `torch`, `CLIP`, `numpy`, `scikit-learn`, evtl. `faiss`
+**Tools:** `torch`, `CLIP`, `numpy`, `scikit-learn`
 
 
-#### 🔹 Aufgabe 2: Klassifikation + Inferenz-Service (A + C)
+#### Aufgabe 2: Klassifikation + Inferenz-Service (A + C)
 
-> Trainiere ein Modell (z. B. Logistic Regression oder k-NN), das für ein neues Bild den wahrscheinlichsten Aufnahmeort vorhersagt.
+> Trainieren eines Modells (Logistic Regression, MLP, k-NN), das für ein neues Bild den wahrscheinlichsten Aufnahmeort vorhersagt.
 
 **Teilaufgaben:**
 
@@ -44,13 +44,13 @@ BV2 Projekt SS25
     
 - Klassifikator trainieren (Top-1 Accuracy, Confusion Matrix, Top-k Evaluation)
     
-- Deployment als REST-Endpunkt (FastAPI): `/predict` → Bild → Vorhersage (Land + Score)
+- Deployment als REST-Endpunkt (FastAPI): `/predict` -> Bild -> Vorhersage (Land + Score)
     
 
 **Tools:** `scikit-learn`, `FastAPI`, `joblib`, `CLIP`, `PIL`
 
 
-#### 🔹 Aufgabe 3: Web-App & Upload-Handling (B + D)
+#### Aufgabe 3: Web-App & Upload-Handling (B + D)
 
 > Frontend zur Bildauswahl, Upload und Ergebnisanzeige entwickeln.
 
@@ -65,9 +65,9 @@ BV2 Projekt SS25
 
 **Tools:** `React`, `Tailwind`, `axios`, evtl. `leaflet` für die Karte
 
-#### 🔹 Aufgabe 4: Ähnliche Bilder & Kartendarstellung (C + D)
+#### Aufgabe 4: Ähnliche Bilder & Kartendarstellung (C + D)
 
-> Zeige dem Nutzer, warum das Modell diesen Ort vorhersagt. Dazu: ähnlichste Bilder aus Trainingsdaten + Confidence + Karte.
+> Erklärbarkeit Modell: Dem Nutzer zeugen, warum das Modell diesen Ort vorhersagt. Dazu ggf. ähnlichste Bilder aus Trainingsdaten + Confidence + Karte.
 
 **Teilaufgaben:**
 
@@ -77,21 +77,11 @@ BV2 Projekt SS25
     
 - Anzeige auf Karte (Land einfärben oder Flagge setzen)
     
-- Textvorschlag: „Das Bild ähnelt typischen Aufnahmen aus … (97 % Sicherheit)“
+- „Das Bild ähnelt typischen Aufnahmen aus … (97 % Sicherheit)“
     
 
 **Tools:** `scikit-learn`, `OpenStreetMap`, `Leaflet`, `React`, ggf. `matplotlib` für Debug
 
-
-#### **Möglicher Wochenplan**
-| Woche | Aufgabe 1 (A+B)                        | Aufgabe 2 (A+C)               | Aufgabe 3 (B+D)           | Aufgabe 4 (C+D)                          |
-| ----- | -------------------------------------- | ----------------------------- | ------------------------- | ---------------------------------------- |
-| 1     | Setup, CLIP testen, Mini-Dataset bauen | Modellskizze, Metriken klären | Upload-Prototyp           | Karten- und Ähnlichkeitsidee ausarbeiten |
-| 2     | Embedding-Pipeline automatisieren      | Training, Val-Metriken testen | UI Upload + API-Call      | Karte + Ähnliche Bilder planen           |
-| 3     | Embedding-Datenbank aufbauen           | API-Endpunkt bereitstellen    | Upload-Endpunkt anbinden  | Ähnliche-Bild-Funktion                   |
-| 4     | Batch-Processing optimieren            | Live-Inferenz                 | Ergebnisanzeige           | Kartenintegration                        |
-| 5     | Finalisierung Datenstruktur            | Feinschliff + Top-k Anzeige   | UI-Styling, Ladeindikator | Konfidenz-Text, Bildvergleich UI         |
-| 6     | Backup + Docs                          | Evaluation + Vergleich        | Feedback & Polishing      | Deployment & Präsentation                |
 
 
 ## Datasets
