@@ -108,9 +108,19 @@ def iso_to_wiki_title(code: str, lang: str = 'de') -> str:
 
 
 # Helper: Wikipedia‑API mit Caching
+# In predictor.py
+
 @lru_cache(maxsize=128)
 def get_wikipedia_info(title: str, lang: str = 'de'):
     S = requests.Session()
+
+    # 1. Define a User-Agent to identify your application
+    headers = {
+        'User-Agent': 'SpotiFindApp/1.0 (MyGeolocatorProject; contact@example.com)'
+    }
+    # 2. Add the headers to your request session
+    S.headers.update(headers)
+
     URL = f"https://{lang}.wikipedia.org/w/api.php"
     params = {
         "action": "query",
@@ -122,7 +132,16 @@ def get_wikipedia_info(title: str, lang: str = 'de'):
         "pithumbsize": 300,
         "format":  "json"
     }
-    resp = S.get(URL, params=params).json()
+
+    # 3. Make the request
+    response = S.get(URL, params=params)
+    
+    # 4. (Optional but good practice) Check if the request was successful
+    response.raise_for_status()
+
+    # 5. Parse the JSON response
+    resp = response.json()
+
     pages = resp.get("query", {}).get("pages", {})
     page = next(iter(pages.values()))
     extract = page.get("extract", "")

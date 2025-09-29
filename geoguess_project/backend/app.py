@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from predictor import predict_location  # ← dein Modell
 import os
+import traceback
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 30 * 1024 * 1024  # 30MB
@@ -18,6 +19,9 @@ def upload():
         results = predict_location(image)  # Berechnung durch das Modell
         return jsonify(results)  # Das Ergebnis enthält schon relevantCountries
     except Exception as e:
+        print("--- AN ERROR OCCURRED ---")
+        traceback.print_exc()  # This prints the full traceback
+        print("-------------------------")
         return jsonify({'error': str(e)}), 500
 
 
@@ -27,6 +31,9 @@ def geojson():
         # GeoJSON-Datei von deinem Backend bereitstellen
         return send_file('geo.json', mimetype='application/json')
     except Exception as e:
+        print("--- AN ERROR OCCURRED ---")
+        traceback.print_exc()  # This prints the full traceback
+        print("-------------------------")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
