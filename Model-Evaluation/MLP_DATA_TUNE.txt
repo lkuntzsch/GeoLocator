@@ -1,0 +1,234 @@
+Epoch 01 | Train: loss=1.3914, acc=0.5520 | Val:   loss=1.1820, acc=0.6124
+Epoch 02 | Train: loss=1.2237, acc=0.6013 | Val:   loss=1.0994, acc=0.6373
+Epoch 03 | Train: loss=1.1796, acc=0.6151 | Val:   loss=1.0637, acc=0.6494
+Epoch 04 | Train: loss=1.1583, acc=0.6218 | Val:   loss=1.0498, acc=0.6543
+Epoch 05 | Train: loss=1.1460, acc=0.6251 | Val:   loss=1.0339, acc=0.6612
+Epoch 06 | Train: loss=1.1368, acc=0.6283 | Val:   loss=1.0247, acc=0.6595
+Epoch 07 | Train: loss=1.1314, acc=0.6301 | Val:   loss=1.0261, acc=0.6611
+Epoch 08 | Train: loss=1.1268, acc=0.6314 | Val:   loss=1.0208, acc=0.6656
+Epoch 09 | Train: loss=1.1236, acc=0.6325 | Val:   loss=1.0105, acc=0.6699
+Epoch 10 | Train: loss=1.1201, acc=0.6335 | Val:   loss=1.0131, acc=0.6678
+Epoch 11 | Train: loss=1.1176, acc=0.6347 | Val:   loss=1.0057, acc=0.6701
+Epoch 12 | Train: loss=1.1145, acc=0.6350 | Val:   loss=1.0035, acc=0.6708
+Epoch 13 | Train: loss=1.1124, acc=0.6360 | Val:   loss=1.0035, acc=0.6725
+Epoch 14 | Train: loss=1.1091, acc=0.6364 | Val:   loss=0.9961, acc=0.6716
+Epoch 15 | Train: loss=1.1071, acc=0.6372 | Val:   loss=1.0018, acc=0.6684
+Epoch 16 | Train: loss=1.1046, acc=0.6379 | Val:   loss=0.9902, acc=0.6711
+Epoch 17 | Train: loss=1.1020, acc=0.6387 | Val:   loss=0.9933, acc=0.6727
+Epoch 18 | Train: loss=1.1002, acc=0.6392 | Val:   loss=0.9884, acc=0.6720
+Epoch 19 | Train: loss=1.0979, acc=0.6395 | Val:   loss=0.9821, acc=0.6757
+Epoch 20 | Train: loss=1.0957, acc=0.6404 | Val:   loss=0.9836, acc=0.6746
+Epoch 21 | Train: loss=1.0923, acc=0.6421 | Val:   loss=0.9782, acc=0.6786
+Epoch 22 | Train: loss=1.0899, acc=0.6423 | Val:   loss=0.9787, acc=0.6790
+Epoch 23 | Train: loss=1.0871, acc=0.6434 | Val:   loss=0.9760, acc=0.6799
+Epoch 24 | Train: loss=1.0839, acc=0.6442 | Val:   loss=0.9697, acc=0.6814
+Epoch 25 | Train: loss=1.0817, acc=0.6448 | Val:   loss=0.9682, acc=0.6798
+Epoch 26 | Train: loss=1.0782, acc=0.6461 | Val:   loss=0.9666, acc=0.6814
+Epoch 27 | Train: loss=1.0763, acc=0.6464 | Val:   loss=0.9685, acc=0.6844
+Epoch 28 | Train: loss=1.0724, acc=0.6477 | Val:   loss=0.9644, acc=0.6839
+Epoch 29 | Train: loss=1.0689, acc=0.6485 | Val:   loss=0.9577, acc=0.6824
+Epoch 30 | Train: loss=1.0654, acc=0.6498 | Val:   loss=0.9511, acc=0.6830
+Epoch 31 | Train: loss=1.0618, acc=0.6508 | Val:   loss=0.9520, acc=0.6837
+Epoch 32 | Train: loss=1.0588, acc=0.6512 | Val:   loss=0.9536, acc=0.6853
+Epoch 33 | Train: loss=1.0546, acc=0.6532 | Val:   loss=0.9420, acc=0.6887
+Epoch 34 | Train: loss=1.0520, acc=0.6542 | Val:   loss=0.9430, acc=0.6883
+Epoch 35 | Train: loss=1.0481, acc=0.6550 | Val:   loss=0.9360, acc=0.6923
+Epoch 36 | Train: loss=1.0430, acc=0.6564 | Val:   loss=0.9349, acc=0.6911
+Epoch 37 | Train: loss=1.0393, acc=0.6572 | Val:   loss=0.9321, acc=0.6914
+Epoch 38 | Train: loss=1.0348, acc=0.6589 | Val:   loss=0.9270, acc=0.6933
+Epoch 39 | Train: loss=1.0308, acc=0.6602 | Val:   loss=0.9239, acc=0.6927
+Epoch 40 | Train: loss=1.0255, acc=0.6615 | Val:   loss=0.9204, acc=0.6963
+Epoch 41 | Train: loss=1.0220, acc=0.6628 | Val:   loss=0.9123, acc=0.6973
+Epoch 42 | Train: loss=1.0170, acc=0.6642 | Val:   loss=0.9164, acc=0.6979
+Epoch 43 | Train: loss=1.0129, acc=0.6655 | Val:   loss=0.9099, acc=0.6994
+Epoch 44 | Train: loss=1.0072, acc=0.6667 | Val:   loss=0.9062, acc=0.6992
+Epoch 45 | Train: loss=1.0020, acc=0.6682 | Val:   loss=0.9015, acc=0.7023
+Epoch 46 | Train: loss=0.9973, acc=0.6696 | Val:   loss=0.8958, acc=0.7011
+Epoch 47 | Train: loss=0.9933, acc=0.6712 | Val:   loss=0.8923, acc=0.7050
+Epoch 48 | Train: loss=0.9874, acc=0.6728 | Val:   loss=0.8881, acc=0.7064
+Epoch 49 | Train: loss=0.9821, acc=0.6742 | Val:   loss=0.8826, acc=0.7072
+Epoch 50 | Train: loss=0.9765, acc=0.6761 | Val:   loss=0.8798, acc=0.7084
+Epoch 51 | Train: loss=0.9704, acc=0.6776 | Val:   loss=0.8741, acc=0.7096
+Epoch 52 | Train: loss=0.9652, acc=0.6791 | Val:   loss=0.8694, acc=0.7133
+Epoch 53 | Train: loss=0.9598, acc=0.6808 | Val:   loss=0.8656, acc=0.7134
+Epoch 54 | Train: loss=0.9530, acc=0.6827 | Val:   loss=0.8620, acc=0.7122
+Epoch 55 | Train: loss=0.9470, acc=0.6844 | Val:   loss=0.8557, acc=0.7150
+Epoch 56 | Train: loss=0.9407, acc=0.6861 | Val:   loss=0.8527, acc=0.7181
+Epoch 57 | Train: loss=0.9341, acc=0.6886 | Val:   loss=0.8449, acc=0.7185
+Epoch 58 | Train: loss=0.9283, acc=0.6900 | Val:   loss=0.8393, acc=0.7195
+Epoch 59 | Train: loss=0.9221, acc=0.6920 | Val:   loss=0.8387, acc=0.7201
+Epoch 60 | Train: loss=0.9149, acc=0.6940 | Val:   loss=0.8318, acc=0.7225
+Epoch 61 | Train: loss=0.9080, acc=0.6958 | Val:   loss=0.8315, acc=0.7219
+Epoch 62 | Train: loss=0.9018, acc=0.6980 | Val:   loss=0.8194, acc=0.7269
+Epoch 63 | Train: loss=0.8951, acc=0.7000 | Val:   loss=0.8197, acc=0.7283
+Epoch 64 | Train: loss=0.8880, acc=0.7021 | Val:   loss=0.8135, acc=0.7280
+Epoch 65 | Train: loss=0.8804, acc=0.7039 | Val:   loss=0.8087, acc=0.7310
+Epoch 66 | Train: loss=0.8738, acc=0.7061 | Val:   loss=0.8048, acc=0.7331
+Epoch 67 | Train: loss=0.8669, acc=0.7083 | Val:   loss=0.8004, acc=0.7328
+Epoch 68 | Train: loss=0.8590, acc=0.7101 | Val:   loss=0.7946, acc=0.7341
+Epoch 69 | Train: loss=0.8516, acc=0.7121 | Val:   loss=0.7922, acc=0.7346
+Epoch 70 | Train: loss=0.8444, acc=0.7148 | Val:   loss=0.7890, acc=0.7344
+Epoch 71 | Train: loss=0.8371, acc=0.7165 | Val:   loss=0.7805, acc=0.7389
+Epoch 72 | Train: loss=0.8288, acc=0.7190 | Val:   loss=0.7788, acc=0.7380
+Epoch 73 | Train: loss=0.8224, acc=0.7211 | Val:   loss=0.7729, acc=0.7402
+Epoch 74 | Train: loss=0.8147, acc=0.7231 | Val:   loss=0.7710, acc=0.7410
+Epoch 75 | Train: loss=0.8063, acc=0.7256 | Val:   loss=0.7640, acc=0.7447
+Epoch 76 | Train: loss=0.7981, acc=0.7280 | Val:   loss=0.7583, acc=0.7464
+Epoch 77 | Train: loss=0.7910, acc=0.7304 | Val:   loss=0.7543, acc=0.7464
+Epoch 78 | Train: loss=0.7837, acc=0.7320 | Val:   loss=0.7517, acc=0.7465
+Epoch 79 | Train: loss=0.7763, acc=0.7340 | Val:   loss=0.7463, acc=0.7487
+Epoch 80 | Train: loss=0.7685, acc=0.7366 | Val:   loss=0.7445, acc=0.7489
+Epoch 81 | Train: loss=0.7599, acc=0.7392 | Val:   loss=0.7378, acc=0.7527
+Epoch 82 | Train: loss=0.7528, acc=0.7411 | Val:   loss=0.7354, acc=0.7534
+Epoch 83 | Train: loss=0.7456, acc=0.7433 | Val:   loss=0.7334, acc=0.7537
+Epoch 84 | Train: loss=0.7374, acc=0.7457 | Val:   loss=0.7303, acc=0.7545
+Epoch 85 | Train: loss=0.7305, acc=0.7476 | Val:   loss=0.7266, acc=0.7556
+Epoch 86 | Train: loss=0.7240, acc=0.7499 | Val:   loss=0.7236, acc=0.7575
+Epoch 87 | Train: loss=0.7180, acc=0.7515 | Val:   loss=0.7215, acc=0.7563
+Epoch 88 | Train: loss=0.7108, acc=0.7539 | Val:   loss=0.7188, acc=0.7590
+Epoch 89 | Train: loss=0.7054, acc=0.7552 | Val:   loss=0.7177, acc=0.7589
+Epoch 90 | Train: loss=0.6995, acc=0.7569 | Val:   loss=0.7150, acc=0.7608
+Epoch 91 | Train: loss=0.6938, acc=0.7584 | Val:   loss=0.7126, acc=0.7620
+Epoch 92 | Train: loss=0.6887, acc=0.7604 | Val:   loss=0.7108, acc=0.7614
+Epoch 93 | Train: loss=0.6840, acc=0.7614 | Val:   loss=0.7097, acc=0.7616
+Epoch 94 | Train: loss=0.6800, acc=0.7628 | Val:   loss=0.7084, acc=0.7622
+Epoch 95 | Train: loss=0.6749, acc=0.7645 | Val:   loss=0.7067, acc=0.7635
+Epoch 96 | Train: loss=0.6725, acc=0.7650 | Val:   loss=0.7076, acc=0.7627
+Epoch 97 | Train: loss=0.6689, acc=0.7660 | Val:   loss=0.7061, acc=0.7624
+Epoch 98 | Train: loss=0.6667, acc=0.7663 | Val:   loss=0.7050, acc=0.7631
+Epoch 99 | Train: loss=0.6643, acc=0.7675 | Val:   loss=0.7048, acc=0.7630
+Epoch 100 | Train: loss=0.6617, acc=0.7682 | Val:   loss=0.7042, acc=0.7640
+
+=== Testset: loss=0.7050, acc=0.7643, top-5=0.9563 ===
+
+Classification Report:
+              precision    recall  f1-score   support
+
+          AT       0.59      0.68      0.63      9997
+          BE       0.71      0.73      0.72      9992
+          BG       0.89      0.89      0.89      9534
+          CH       0.73      0.73      0.73      9999
+          CZ       0.72      0.71      0.72      9997
+          DE       0.63      0.55      0.59     20000
+          DK       0.61      0.74      0.67     10000
+          EE       0.86      0.84      0.85      9985
+          ES       0.79      0.73      0.76     19796
+          FI       0.80      0.88      0.84      9998
+          FR       0.76      0.61      0.67     20000
+          GB       0.83      0.84      0.83     20000
+          GR       0.82      0.86      0.84      9998
+          HR       0.74      0.65      0.69      9991
+          HU       0.68      0.73      0.70      9996
+          IE       0.79      0.89      0.84      9999
+          IT       0.72      0.67      0.69     20000
+          LT       0.88      0.84      0.86     10515
+          LU       0.90      0.92      0.91      9974
+          LV       0.70      0.81      0.75      8100
+          MT       0.96      0.99      0.97      7625
+          NL       0.69      0.80      0.74     10000
+          NO       0.78      0.83      0.80      9977
+          PL       0.74      0.71      0.72     20000
+          PT       0.71      0.81      0.75     10448
+          RO       0.86      0.86      0.86     11523
+          RS       0.82      0.83      0.83      9998
+          SE       0.87      0.76      0.81     20000
+          SI       0.73      0.79      0.76      9990
+          SK       0.74      0.76      0.75      9998
+
+    accuracy                           0.76    367430
+   macro avg       0.77      0.78      0.77    367430
+weighted avg       0.77      0.76      0.76    367430
+
+
+Confusion Matrix:
+[[ 6812    87    25   483   247   423    75    15    60    45   128    36
+     12    71   133    14   281    30    81    39     4    50   121   179
+     43    64    32    52   211   144]
+ [  104  7320     7    97    94   417   177    16    42    24   228   118
+      8    38    68    58    88    37   165    27    15   428    38   168
+     14    15    30    30    21   100]
+ [   14     8  8520    31    36    16    14     3    30     6    12    14
+    100    71    39     9    43    23    20    18     7     3    24    31
+     22   112   142     7    63    96]
+ [  576   130    42  7289   146   312    65    13    43    20    90    42
+     12    55    24    29   249    27   121    13     9    58   180    47
+     35    27    39    30   176   100]
+ [  250   140    49   120  7100   343    58    25    62    25    87    54
+     10    74   161    30    73    70   150    79     5    42    77   275
+     28    50    53    41   140   326]
+ [  927   526    20   413   409 11044   984    68   165   147   598   521
+     22    82   361   136   323    83    59   141     1  1082   122  1028
+     76   106    59   301    62   134]
+ [   64   179     5    41    36   432  7432    47    37    51   151   293
+      6     7    64   106    55    32    18    97     3   289    69   155
+     36    14    13   219     9    40]
+ [   26    20     4    10    29    48    95  8340     1    81    13    15
+      1    11    33     9    10    73    10   792     0    29    55   105
+      8    16    19   102    14    16]
+ [  131    46    38    57    66   138    87     6 14502    22   491   190
+    481   120    92    99  1125    13    13    28    50    73    78   149
+   1440    93    52    34    28    54]
+ [   42    16     2    10     5    83    59    68    12  8781    15    12
+      1     6    11    12    13    26     3    87     1    36   192    83
+      9    14     3   386     4     6]
+ [  364   361    26   225   134   840   599    34   804    47 12171   672
+    134   137   291   318   953    27    21    64     8   299    86   415
+    488   116    83   141    46    96]
+ [   39   129     7    29    36   307   405     8    84    18   320 16735
+     17    10    79   969    89     4    15    24     1   249    77   108
+     95    30    28    65     4    19]
+ [   23     5   120    16     8     9    18     2   235     6    49    11
+   8624   112    31    10   253    10     5     9    48     3    17    26
+    172    54    68     5    19    30]
+ [  128    46    84    80    87    47    18    12   127     6    57    14
+    146  6492   200    12   227    25    44    13    62    24    39    98
+     59    43   179     8  1476   138]
+ [  110    82    23    35   127   200    92    22    53    14   137    69
+     31   193  7310    27   128    54    28    55     1    64    23   318
+     27   142   156    27   113   335]
+ [    3    31     8    13    13    34    72     4    17    10    79   561
+      9     9    15  8907    29     4    11     8     5    27    23    27
+     51     7     2     5     4    11]
+ [  619   135    53   388    81   273   130    21  1065    36   537   138
+    508   241   274   124 13464    18    14    29    28   148   105   251
+    598   200   168    59   171   124]
+ [   27    47    22    25    91    81    61    74    20    49    10    15
+      4    14    84     9    25  8869    32   423     7    52    45   207
+      9    21    26    49    18    99]
+ [   30   132    11    71    74    99    34     7     8     2    27    28
+      3    23    17    16     9    15  9164     8     0    32    16    24
+      3     4    10     4    36    67]
+ [   21    28    13    15    37    67    84   443    10   102     8    14
+      3     7    40     6    18   199    20  6556     4    29    47   149
+      8     9    22    85    11    45]
+ [    1     5     6     1     3     0     1     1    22     0     3     0
+     12    16     0     3    14     0     2     0  7517     0     2     0
+      8     0     0     0     5     3]
+ [   42   306     1    34    30   439   243    12    29    18    86   183
+      3    10    63    40    56    18     5    29     0  8044    20   188
+     13     8    11    49     4    16]
+ [  112    46    14   103    71    74    82    47    32   213    30    62
+      2    27    15    53    37    33    41    76     1    17  8258    38
+     24    17    18   366    29    39]
+ [  300   164    45    40   295   999   368   120   125   145   259   141
+     30   124   533    83   290   163    15   335     0   355    90 14128
+     93   190   123   195    52   200]
+ [   31    22    16    24    14    49    38     9   620    17   164    67
+    173    38    21    94   349     3     5     3     8    18    31    62
+   8459    44    30    18     4    17]
+ [   82     4   148    23    52    60    14     4    79    17    38    32
+     73    34   198    26   141    13     0     9     0    14    21   165
+     43  9964   168    10    18    73]
+ [   62    29   132    40    63    53    23     7    47     4    40    13
+     63   141   140    15   135    38    18    33    11     9    33    88
+     33   157  8300     8   110   153]
+ [  146    81     9    65    50   411   736   216    52   998   158   148
+     13    31    54    42    77    60     7   303     1   218   572   273
+     67    21     7 15134    19    31]
+ [  262    39    58   138    95    60    20    12    27     7    43     6
+     14   526    76    15   166    24    59    32    19     2    43    45
+     19     9    82     8  7938   146]
+ [  197    77    54    89   294   101    38    18    51    16    53    30
+     37    81   330    13   104    62    81    58    12    15    44   155
+     17    62   139    25   105  7640]]
+PS C:\Users\master\Desktop\Bv-Dateien>
