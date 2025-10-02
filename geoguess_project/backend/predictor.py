@@ -9,12 +9,10 @@ import pycountry
 import requests
 from functools import lru_cache
 
-# Modellparameter
-HIDDEN_DIMS = [1024, 512]
-DROPOUT     = 0.21911440122299433  # falls du das exakt übernehmen willst
+HIDDEN_DIMS = [512, 256, 128]
+DROPOUT = 0.5
 INPUT_DIM = 512
 
-# Laden des Modells und der Preprozessoren
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 checkpoint = torch.load("best_model.pt", map_location=device)
@@ -61,8 +59,6 @@ country_coords = {
     "MT": (35.9375, 14.3754)
 }
 
-# Helper: ISO‑Code → Wikipedia‑Seitentitel
-# Manuelle Zuordnung für deutsche Wikipedia-Titel
 ISO_TO_WIKI_DE = {
     "PL": "Polen",
     "DE": "Deutschland",
@@ -106,19 +102,13 @@ def iso_to_wiki_title(code: str, lang: str = 'de') -> str:
     return country.name.replace(' ', '_')
 
 
-
-# Helper: Wikipedia‑API mit Caching
-# In predictor.py
-
 @lru_cache(maxsize=128)
 def get_wikipedia_info(title: str, lang: str = 'de'):
     S = requests.Session()
 
-    # 1. Define a User-Agent to identify your application
     headers = {
         'User-Agent': 'SpotiFindApp/1.0 (MyGeolocatorProject; contact@example.com)'
     }
-    # 2. Add the headers to your request session
     S.headers.update(headers)
 
     URL = f"https://{lang}.wikipedia.org/w/api.php"
@@ -133,13 +123,10 @@ def get_wikipedia_info(title: str, lang: str = 'de'):
         "format":  "json"
     }
 
-    # 3. Make the request
     response = S.get(URL, params=params)
     
-    # 4. (Optional but good practice) Check if the request was successful
     response.raise_for_status()
 
-    # 5. Parse the JSON response
     resp = response.json()
 
     pages = resp.get("query", {}).get("pages", {})
@@ -149,23 +136,17 @@ def get_wikipedia_info(title: str, lang: str = 'de'):
     return {"description": extract, "thumbnail": thumb}
 
 def predict_location(image_file):
-    # CLIP-Embedding extrahieren
     embedding = image_to_clip_embedding(image_file).reshape(1, -1)
-    # Skalierung
     X_scaled = scaler.transform(embedding)
-    # In Tensor umwandeln und auf das Device schieben
     X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(device)
 
-    # Inferenz
     with torch.no_grad():
         logits = model(X_tensor)
         probs = torch.softmax(logits, dim=1).cpu().numpy()[0]
 
-    # Top‑5 Länder ermitteln
     topk = probs.argsort()[::-1][:5]
     top_labels = encoder.inverse_transform(topk)
 
-    # Ergebnisse aufbereiten, inkl. Wikipedia‑Info
     top_countries = []
     for label, i in zip(top_labels, topk):
         lat, lon = country_coords.get(label, (0.0, 0.0))

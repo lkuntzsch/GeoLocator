@@ -13,7 +13,6 @@ from torch.utils.data import Dataset, DataLoader
 from types import SimpleNamespace
 from sklearn.metrics import classification_report, confusion_matrix
 
-# 1) Dataset-Klasse
 class EmbeddingDataset(Dataset):
     def __init__(self, emb_path, labels_csv, scaler=None, encoder=None, fit_scaler=False, fit_encoder=False):
         exclude_countries = {'SI', 'LU', 'MT'}
@@ -22,7 +21,6 @@ class EmbeddingDataset(Dataset):
         self.y = df.loc[mask, 'country'].values
         self.X = np.load(emb_path)[mask.values]
 
-        # Label-Encoding
         if fit_encoder:
             self.encoder = LabelEncoder()
             self.y = self.encoder.fit_transform(self.y)
@@ -30,7 +28,6 @@ class EmbeddingDataset(Dataset):
             self.encoder = encoder
             self.y = self.encoder.transform(self.y)
 
-        # Skalierung
         if fit_scaler:
             self.scaler = StandardScaler()
             self.X = self.scaler.fit_transform(self.X)
@@ -47,7 +44,6 @@ class EmbeddingDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
 
-# 2) MLP‑Modell
 class MLP(nn.Module):
     def __init__(self, input_dim, hidden_dims, num_classes, dropout_rate):
         super().__init__()
@@ -67,7 +63,6 @@ class MLP(nn.Module):
     def forward(self, x):
         return self.net(x)
 
-# 3) Training & Evaluation
 def train_one_epoch(model, loader, criterion, optimizer, device):
     model.train()
     total_loss = 0
@@ -96,11 +91,9 @@ def eval_one_epoch(model, loader, criterion, device):
             correct += (logits.argmax(1) == yb).sum().item()
     return total_loss / len(loader.dataset), correct / len(loader.dataset)
 
-# 4) Main
 def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Preprocessor nur auf Trainingsdaten fitten
     train_ds = EmbeddingDataset(
         emb_path=args.train_emb, labels_csv=args.train_labels,
         fit_scaler=True, fit_encoder=True
@@ -160,21 +153,14 @@ def main(args):
                 print(f"Early stopping nach {args.patience} Epochen ohne Verbesserung.")
                 break
 
-    # Test-Evaluation
-    model.load_state_dict(torch.load(os.path.join(args.checkpoint_dir, 'best_model.pt')))
-    test_loss, test_acc = eval_one_epoch(model, test_loader, criterion, device)
-    print(f"\n=== Testset: loss={test_loss:.4f}, acc={test_acc:.4f} ===")
-    # Ganz oben, falls noch nicht importiert:
-# … in deiner main()-Funktion …
-    # Early Stopping Loop endet hier
-    # …
-
-    # Test-Evaluation
     model.load_state_dict(torch.load(os.path.join(args.checkpoint_dir, 'best_model.pt')))
     test_loss, test_acc = eval_one_epoch(model, test_loader, criterion, device)
     print(f"\n=== Testset: loss={test_loss:.4f}, acc={test_acc:.4f} ===")
 
-    # --- Ausführlicher Report nach Test-Evaluation ---
+    model.load_state_dict(torch.load(os.path.join(args.checkpoint_dir, 'best_model.pt')))
+    test_loss, test_acc = eval_one_epoch(model, test_loader, criterion, device)
+    print(f"\n=== Testset: loss={test_loss:.4f}, acc={test_acc:.4f} ===")
+
     model.eval()
     all_preds, all_labels = [], []
     with torch.no_grad():
@@ -190,7 +176,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-    # Feste Defaults
     args = SimpleNamespace(
         train_emb="emb_train.npy",
         val_emb="emb_val.npy",
